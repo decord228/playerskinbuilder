@@ -72,19 +72,21 @@
 }
 
 .ticon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   margin-right: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--icon);
+  background: var(--bg-darkest);
+  border-radius: 4px;
 }
 
 .ticon svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .tlabel {
