@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { buildDefaultScene } from '../data/defaultScene';
-import type { Store, TreeNode, NodeType } from '../types';
+import type { Store, TreeNode, NodeType, ProjectData } from '../types';
 
 const useStore = create<Store>()(
   persist(
@@ -23,6 +23,16 @@ const useStore = create<Store>()(
 
       createNode: (type, label, parentId) => set((state) => {
         const id = `n${state.nidCounter}`;
+
+        // Set default props based on node type
+        let defaultProps = {};
+        if (type === 'Separator') {
+          defaultProps = {
+            size_flags_horizontal: 'FILL',
+            size_flags_vertical: 'SHRINK_CENTER'
+          };
+        }
+
         const node = {
           id,
           label: label || type,
@@ -32,7 +42,7 @@ const useStore = create<Store>()(
           open: true,
           visible: true,
           locked: false,
-          props: {}
+          props: defaultProps
         };
 
         const newTree = [...state.tree];
@@ -255,6 +265,29 @@ const useStore = create<Store>()(
       },
 
       clearSelection: () => set({ selectedNodeId: null }),
+
+      // Project export/import
+      exportProject: () => {
+        const state = get();
+        return {
+          version: '1.0.0',
+          name: 'Untitled Project',
+          description: '',
+          author: '',
+          created: new Date().toISOString(),
+          modified: new Date().toISOString(),
+          tree: state.tree,
+          nidCounter: state.nidCounter
+        };
+      },
+
+      importProject: (projectData: any) => {
+        set({
+          tree: projectData.tree || [],
+          nidCounter: projectData.nidCounter || 500,
+          selectedNodeId: null
+        });
+      },
     }),
     {
       name: 'skinbuilder-storage',

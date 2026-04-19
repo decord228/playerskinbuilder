@@ -6,6 +6,7 @@ import { getTypeIcon } from '../data/icons';
 import { applyPropertyChange } from '../utils/propertyApplier';
 import { assetManager } from '../store/assetStore';
 import IconPicker from './IconPicker';
+import SVGPicker from './SVGPicker';
 import SVGEditor from './SVGEditor';
 import './PropertiesPanel.css';
 
@@ -246,6 +247,135 @@ export default function PropertiesPanel() {
             />
           </div>
         );
+
+      case 'svg_picker':
+        return (
+          <div className="pitem" key={field.key}>
+            <label className="plabel">{field.label || field.key}</label>
+            <SVGPicker
+              value={currentValue}
+              onChange={(value) => handlePropChange(field.key, value)}
+            />
+          </div>
+        );
+
+      case 'button_mode_switch':
+        const buttonMode = selectedNode.props.button_mode || 'legacy';
+        return (
+          <div className="pitem" key="button_mode_switch" style={{ flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+              <button
+                className={`mode-switch-btn ${buttonMode === 'legacy' ? 'active' : ''}`}
+                onClick={() => handlePropChange('button_mode', 'legacy')}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '12px',
+                  background: buttonMode === 'legacy' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.05)',
+                  border: buttonMode === 'legacy' ? '1px solid rgba(59, 130, 246, 0.5)' : '1px solid var(--border)',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  color: buttonMode === 'legacy' ? '#3b82f6' : 'var(--text-muted)',
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="4" y="8" width="16" height="8" rx="4"/>
+                  <text x="12" y="13.5" fontSize="6" fill="currentColor" textAnchor="middle" fontWeight="600">BTN</text>
+                </svg>
+                <span style={{ fontSize: '11px', fontWeight: '500' }}>Legacy</span>
+              </button>
+              <button
+                className={`mode-switch-btn ${buttonMode === 'svg' ? 'active' : ''}`}
+                onClick={() => handlePropChange('button_mode', 'svg')}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '12px',
+                  background: buttonMode === 'svg' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.05)',
+                  border: buttonMode === 'svg' ? '1px solid rgba(59, 130, 246, 0.5)' : '1px solid var(--border)',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  color: buttonMode === 'svg' ? '#3b82f6' : 'var(--text-muted)',
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                <span style={{ fontSize: '11px', fontWeight: '500' }}>SVG</span>
+              </button>
+            </div>
+          </div>
+        );
+
+
+      case 'panel_mode_switch':
+        const panelMode = selectedNode.props.panel_mode || 'legacy';
+        return (
+          <div className="pitem" key="panel_mode_switch" style={{ flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+              <button
+                className={`mode-switch-btn ${panelMode === 'legacy' ? 'active' : ''}`}
+                onClick={() => handlePropChange('panel_mode', 'legacy')}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '12px',
+                  background: panelMode === 'legacy' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.05)',
+                  border: panelMode === 'legacy' ? '1px solid rgba(59, 130, 246, 0.5)' : '1px solid var(--border)',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  color: panelMode === 'legacy' ? '#3b82f6' : 'var(--text-muted)',
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="3"/>
+                  <text x="12" y="13.5" fontSize="5" fill="currentColor" textAnchor="middle" fontWeight="600">PANEL</text>
+                </svg>
+                <span style={{ fontSize: '11px', fontWeight: '500' }}>Legacy</span>
+              </button>
+              <button
+                className={`mode-switch-btn ${panelMode === 'svg' ? 'active' : ''}`}
+                onClick={() => handlePropChange('panel_mode', 'svg')}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '12px',
+                  background: panelMode === 'svg' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.05)',
+                  border: panelMode === 'svg' ? '1px solid rgba(59, 130, 246, 0.5)' : '1px solid var(--border)',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  color: panelMode === 'svg' ? '#3b82f6' : 'var(--text-muted)',
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="3" width="18" height="18" rx="3"/>
+                </svg>
+                <span style={{ fontSize: '11px', fontWeight: '500' }}>SVG</span>
+              </button>
+            </div>
+          </div>
+        );
+
 
       case 'select':
         return (

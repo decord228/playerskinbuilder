@@ -1,6 +1,9 @@
 import type { TreeNode, PropertySection } from '../types';
 
 export function getPropSections(node: TreeNode): PropertySection[] {
+  const buttonMode = node.type === 'Button' ? (node.props.button_mode || 'legacy') : null;
+  const panelMode = node.type === 'PanelContainer' ? (node.props.panel_mode || 'legacy') : null;
+
   const base = [
     {
       name: 'Node',
@@ -92,49 +95,104 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         { key: 'clip_contents', type: 'bool', def: 'false' },
       ]
     }],
-    'PanelContainer': [{
-      name: 'Panel Style',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" opacity="0.2"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>',
-      fields: [
-        { key: 'bg_color', label: 'background', type: 'color', def: '#252729' },
-        { key: 'border_color', label: 'border', type: 'color', def: '#333537' },
-        { key: 'border_radius', type: 'slider', def: '0', min: 0, max: 50 },
-        { key: 'padding', type: 'slider', def: '8', min: 0, max: 50 },
-        { key: 'clip_contents', type: 'bool', def: 'false' },
-      ]
-    }],
-    'Button': [
+    'PanelContainer': [
       {
-        name: 'Button Style',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
+        name: 'Panel Mode',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>',
         fields: [
-          { key: 'bg_color', label: 'background', type: 'color', def: 'rgba(255,255,255,0.1)' },
-          { key: 'hover_bg_color', label: 'hover bg', type: 'color', def: 'rgba(255,255,255,0.2)' },
-          { key: 'active_bg_color', label: 'active bg', type: 'color', def: 'rgba(255,255,255,0.15)' },
-          { key: 'disabled_bg_color', label: 'disabled bg', type: 'color', def: 'rgba(255,255,255,0.05)' },
-          { key: 'border_radius', label: 'border radius', type: 'slider', def: '100', min: 0, max: 100 },
-          { key: 'font_color', label: 'font color', type: 'color', def: '#ffffff' },
-          { key: 'disabled_font_color', label: 'disabled font', type: 'color', def: 'rgba(255,255,255,0.3)' },
-          { key: 'font_size', type: 'slider', def: '14', min: 8, max: 32 },
-          { key: 'font_family', type: 'select', def: 'Montserrat', opts: ['Montserrat', 'JetBrains Mono', 'Rajdhani', 'system-ui'] },
+          { type: 'panel_mode_switch' },
         ]
       },
+      ...(panelMode === 'svg' ? [
+        {
+          name: 'SVG Panel',
+          icon: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>',
+          fields: [
+            { key: 'svg_content', label: 'SVG content', type: 'svg_picker', def: '<svg viewBox="0 0 100 100" fill="none"><rect width="100" height="100" fill="rgba(37,39,41,0.8)" rx="8"/></svg>' },
+            { key: 'clip_contents', type: 'bool', def: 'false' },
+          ]
+        }
+      ] : [
+        {
+          name: 'Panel Style',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" opacity="0.2"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>',
+          fields: [
+            { key: 'bg_color', label: 'background', type: 'color', def: '#252729' },
+            { key: 'border_color', label: 'border', type: 'color', def: '#333537' },
+            { key: 'border_radius', type: 'slider', def: '0', min: 0, max: 50 },
+            { key: 'padding', type: 'slider', def: '8', min: 0, max: 50 },
+            { key: 'clip_contents', type: 'bool', def: 'false' },
+          ]
+        }
+      ])
+    ],
+    'Button': [
       {
-        name: 'Button',
+        name: 'Button Mode',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
         fields: [
-          { key: 'text', type: 'text', def: 'Button' },
+          { type: 'button_mode_switch' },
+        ]
+      },
+      ...(buttonMode === 'svg' ? [
+        {
+          name: 'SVG Button',
+          icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+          fields: [
+            { key: 'svg_content', label: 'SVG content', type: 'svg_picker', def: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' },
+            { key: 'action', type: 'select', def: 'none', opts: ['none', 'play', 'rewind', 'forward', 'next', 'fullscreen'] },
+            { key: 'disabled', type: 'bool', def: 'false' },
+          ]
+        }
+      ] : [
+        {
+          name: 'Button Style',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
+          fields: [
+            { key: 'bg_color', label: 'background', type: 'color', def: 'rgba(255,255,255,0.1)' },
+            { key: 'hover_bg_color', label: 'hover bg', type: 'color', def: 'rgba(255,255,255,0.2)' },
+            { key: 'active_bg_color', label: 'active bg', type: 'color', def: 'rgba(255,255,255,0.15)' },
+            { key: 'disabled_bg_color', label: 'disabled bg', type: 'color', def: 'rgba(255,255,255,0.05)' },
+            { key: 'border_radius', label: 'border radius', type: 'slider', def: '100', min: 0, max: 100 },
+            { key: 'font_color', label: 'font color', type: 'color', def: '#ffffff' },
+            { key: 'disabled_font_color', label: 'disabled font', type: 'color', def: 'rgba(255,255,255,0.3)' },
+            { key: 'font_size', type: 'slider', def: '14', min: 8, max: 32 },
+            { key: 'font_family', type: 'select', def: 'Montserrat', opts: ['Montserrat', 'JetBrains Mono', 'Rajdhani', 'system-ui'] },
+          ]
+        },
+        {
+          name: 'Button',
+          fields: [
+            { key: 'text', type: 'text', def: 'Button' },
+            { key: 'action', type: 'select', def: 'none', opts: ['none', 'play', 'rewind', 'forward', 'next', 'fullscreen'] },
+            { key: 'icon', type: 'icon_picker', def: '' },
+            { key: 'icon_position', label: 'icon position', type: 'select', def: 'row', opts: ['row', 'column'] },
+            { key: 'icon_label', type: 'text', def: '' },
+            { key: 'icon_label_size', type: 'slider', def: '15', min: 8, max: 24 },
+            { key: 'icon_label_gap', type: 'slider', def: '0', min: 0, max: 20 },
+            { key: 'flat', type: 'bool', def: 'false' },
+            { key: 'disabled', type: 'bool', def: 'false' },
+            { key: 'toggle_mode', type: 'bool', def: 'false' },
+            { key: 'toggle_pressed', label: 'initially pressed', type: 'bool', def: 'false' },
+            { key: 'toggle_icon', label: 'toggle icon (when pressed)', type: 'icon_picker', def: '' },
+            { key: 'icon_animation', label: 'icon animation', type: 'select', def: 'none', opts: ['none', 'fade', 'morph'] },
+            { key: 'animation_duration', label: 'animation duration (ms)', type: 'slider', def: '300', min: 100, max: 1000, step: 50 },
+            { key: 'sync_with_video', label: 'sync with video state', type: 'bool', def: 'false' },
+            { key: 'alignment', type: 'select', def: 'CENTER', opts: ['LEFT', 'CENTER', 'RIGHT'] },
+            { key: 'gap', type: 'slider', def: '8', min: 0, max: 50 },
+            { key: 'font_weight', type: 'slider', def: '600', min: 100, max: 900, step: 100 },
+          ]
+        }
+      ]),
+    ],
+    'SVGButton': [
+      {
+        name: 'SVGButton',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
+        fields: [
+          { key: 'svg_content', label: 'SVG content', type: 'text', def: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' },
           { key: 'action', type: 'select', def: 'none', opts: ['none', 'play', 'rewind', 'forward', 'next', 'fullscreen'] },
-          { key: 'icon', type: 'icon_picker', def: '' },
-          { key: 'icon_position', label: 'icon position', type: 'select', def: 'row', opts: ['row', 'column'] },
-          { key: 'icon_label', type: 'text', def: '' },
-          { key: 'icon_label_size', type: 'slider', def: '15', min: 8, max: 24 },
-          { key: 'icon_label_gap', type: 'slider', def: '0', min: 0, max: 20 },
-          { key: 'flat', type: 'bool', def: 'false' },
           { key: 'disabled', type: 'bool', def: 'false' },
-          { key: 'toggle_mode', type: 'bool', def: 'false' },
-          { key: 'alignment', type: 'select', def: 'CENTER', opts: ['LEFT', 'CENTER', 'RIGHT'] },
-          { key: 'gap', type: 'slider', def: '8', min: 0, max: 50 },
-          { key: 'font_weight', type: 'slider', def: '600', min: 100, max: 900, step: 100 },
         ]
       },
     ],
@@ -251,6 +309,16 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         { key: 'volume_db', type: 'slider', def: '0.0', min: -80, max: 0, step: 0.1 },
         { key: 'expand', type: 'bool', def: 'true' },
         { key: 'bus', type: 'text', def: 'Master' },
+      ]
+    }],
+    'Separator': [{
+      name: 'Separator',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg>',
+      fields: [
+        { key: 'show_line', label: 'show line', type: 'bool', def: 'true' },
+        { key: 'line_color', label: 'line color', type: 'color', def: 'rgba(255,255,255,0.2)' },
+        { key: 'line_thickness', label: 'line thickness', type: 'slider', def: '1', min: 1, max: 10, step: 0.01 },
+        { key: 'separation', label: 'separation (spacing)', type: 'slider', def: '8', min: 0, max: 50, step: 0.01 },
       ]
     }],
   };

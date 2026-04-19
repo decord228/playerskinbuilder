@@ -8,11 +8,13 @@ export type NodeType =
   | 'PanelContainer'
   | 'ColorRect'
   | 'Button'
+  | 'SVGButton'
   | 'Label'
   | 'HSlider'
   | 'VolumeButton'
   | 'TextureRect'
   | 'VideoStreamPlayer'
+  | 'Separator'
   | 'Control';
 
 export interface NodeTypeDefinition {
@@ -49,7 +51,9 @@ export type PropertyFieldType =
   | 'anchor'
   | 'margin_preview'
   | 'gradient_editor'
-  | 'icon_picker';
+  | 'icon_picker'
+  | 'svg_picker'
+  | 'button_mode_switch';
 
 export interface PropertyField {
   key?: string;
@@ -107,9 +111,23 @@ export interface StoreActions {
   loadDefaultScene: () => void;
   resetScene: () => void;
   clearSelection: () => void;
+  exportProject: () => ProjectData;
+  importProject: (projectData: ProjectData) => void;
 }
 
 export type Store = StoreState & StoreActions;
+
+// Project data format
+export interface ProjectData {
+  version: string;
+  name: string;
+  description: string;
+  author: string;
+  created: string;
+  modified: string;
+  tree: TreeNode[];
+  nidCounter: number;
+}
 
 // Re-export asset types
 export type { Asset, AssetStore } from './assets';

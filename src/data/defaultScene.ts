@@ -271,7 +271,11 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: getAssetByName('play.svg')
+    icon: getAssetByName('play.svg'),
+    icon_toggle: getAssetByName('Vector.svg'),
+    icon_animation: 'morph',
+    icon_animation_duration: '400',
+    sync_with_video: 'true'
   };
 
   const rw = mk('secback', 'Rewind10', 'Button', lbc.id, false);

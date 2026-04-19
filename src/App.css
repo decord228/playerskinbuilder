@@ -13,8 +13,8 @@
 
 .panel-left {
   width: 350px;
-  min-width: 180px;
-  max-width: 500px;
+  min-width: 280px;
+  max-width: 600px;
   background: linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-mid) 100%);
   border-right: 1px solid var(--border);
   display: flex;

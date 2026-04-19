@@ -1,36 +1,78 @@
 import React, { useEffect, useState, useRef } from 'react';
 import useStore from './store/useStore';
+import { useProjectStore } from './store/useProjectStore';
 import Header from './components/Header';
 import Outliner from './components/Outliner';
 import FileBrowser from './components/FileBrowser';
 import PropertiesPanel from './components/PropertiesPanel';
 import Viewport from './components/Viewport';
 import AddNodeDialog from './components/AddNodeDialog';
+import ProjectManager from './components/ProjectManager';
 import GlobalDropZone from './components/GlobalDropZone';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { loadDefaultIcons } from './utils/defaultIcons';
+import { useProjectFileWatcher } from './hooks/useProjectFileWatcher';
+import { useAutoSave } from './hooks/useAutoSave';
+import { useFileWatcher } from './hooks/useFileWatcher';
 import './App.css';
 
 function App() {
-  const { tree, loadDefaultScene, selectedNodeId, mode } = useStore();
+  const { tree, importProject, selectedNodeId, mode } = useStore();
+  const { isSaving, lastSaved, currentProjectName, currentProjectId, initStorage, projects, openProject } = useProjectStore();
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const iconsLoadedRef = useRef(false);
+  const [showProjectManager, setShowProjectManager] = useState(false);
+  const projectLoadedRef = useRef(false);
 
   useKeyboardShortcuts();
+  useProjectFileWatcher();
+  useAutoSave();
+  useFileWatcher();
+
+  // Expose store to window for debugging
+  useEffect(() => {
+    (window as any).__STORE__ = useStore.getState();
+  }, []);
 
   useEffect(() => {
-    if (tree.length === 0) {
-      loadDefaultScene();
-    }
-    if (!iconsLoadedRef.current) {
-      iconsLoadedRef.current = true;
-      loadDefaultIcons();
+    if (!projectLoadedRef.current) {
+      projectLoadedRef.current = true;
+
+      // Initialize storage and check if we have any projects
+      initStorage().then(() => {
+        // Try to restore last opened project
+        const lastProjectId = localStorage.getItem('current-project-id');
+
+        if (lastProjectId) {
+          // Try to open last project
+          openProject(lastProjectId).catch(() => {
+            // If failed, show project manager
+            if (projects.length === 0) {
+              useStore.setState({ tree: [] });
+              setShowProjectManager(true);
+            }
+          });
+        } else if (projects.length === 0 && !currentProjectId) {
+          // No projects exist - clear tree and show project manager
+          useStore.setState({ tree: [] });
+          setShowProjectManager(true);
+        }
+      });
     }
   }, []);
 
   useEffect(() => {
     const resizeHorizontal = document.getElementById('resizeHorizontal');
     if (!resizeHorizontal) return;
+
+    // Load saved horizontal split position
+    const savedFlex = localStorage.getItem('ui-horizontal-split-flex');
+    if (savedFlex) {
+      requestAnimationFrame(() => {
+        const topPanel = resizeHorizontal.previousElementSibling as HTMLElement;
+        if (topPanel) {
+          topPanel.style.flex = savedFlex;
+        }
+      });
+    }
 
     let isResizing = false;
 
@@ -59,6 +101,14 @@ function App() {
     };
 
     const handleMouseUp = () => {
+      if (isResizing) {
+        const topPanel = resizeHorizontal.previousElementSibling as HTMLElement;
+        const bottomPanel = resizeHorizontal.nextElementSibling as HTMLElement;
+        const topFlex = topPanel.style.flex;
+        const bottomFlex = bottomPanel.style.flex;
+        localStorage.setItem('ui-horizontal-split-flex', topFlex);
+        localStorage.setItem('ui-ph-bottom-flex', bottomFlex);
+      }
       isResizing = false;
       document.body.style.cursor = '';
     };
@@ -77,6 +127,15 @@ function App() {
   useEffect(() => {
     const resizeLeft = document.getElementById('resizeLeft');
     if (!resizeLeft) return;
+
+    // Load saved left panel width
+    const savedLeftWidth = localStorage.getItem('ui-left-panel-width');
+    if (savedLeftWidth) {
+      const leftPanel = resizeLeft.previousElementSibling as HTMLElement;
+      if (leftPanel) {
+        leftPanel.style.width = `${savedLeftWidth}px`;
+      }
+    }
 
     let isResizing = false;
 
@@ -99,6 +158,11 @@ function App() {
     };
 
     const handleMouseUp = () => {
+      if (isResizing) {
+        const leftPanel = resizeLeft.previousElementSibling as HTMLElement;
+        const width = leftPanel.getBoundingClientRect().width;
+        localStorage.setItem('ui-left-panel-width', width.toString());
+      }
       isResizing = false;
       document.body.style.cursor = '';
     };
@@ -118,15 +182,19 @@ function App() {
     setShowAddDialog(true);
   };
 
+  // Get saved flex value for ph-top
+  const savedPhTopFlex = typeof window !== 'undefined' ? localStorage.getItem('ui-horizontal-split-flex') : null;
+  const savedPhBottomFlex = typeof window !== 'undefined' ? localStorage.getItem('ui-ph-bottom-flex') : null;
+
   return (
     <div className="app">
       <Header />
-      <div className="main">
+      <div className="main" style={!currentProjectId ? { filter: 'blur(8px)', pointerEvents: 'none' } : {}}>
         {mode === 'edit' && (
           <>
             <div className="panel-left">
               <div className="ph">
-                <div className="ph-top">
+                <div className="ph-top" style={savedPhTopFlex ? { flex: savedPhTopFlex } : {}}>
                   <div className="tabbar">
                     <div className="tab active">Scene</div>
                     <div className="tab-actions">
@@ -136,7 +204,7 @@ function App() {
                   <Outliner />
                 </div>
                 <div className="ph-resize" id="resizeHorizontal"></div>
-                <div className="ph-bottom">
+                <div className="ph-bottom" style={savedPhBottomFlex ? { flex: savedPhBottomFlex } : {}}>
                   <FileBrowser />
                 </div>
               </div>
@@ -161,7 +229,22 @@ function App() {
 
       <div className="statusbar">
         <div className="si">
-          <span className="sdot"></span> Ready
+          {isSaving ? (
+            <>
+              <span className="sdot" style={{ background: 'var(--accent)' }}></span> Saving...
+            </>
+          ) : lastSaved ? (
+            <>
+              <span className="sdot"></span> Saved {new Date(lastSaved).toLocaleTimeString()}
+            </>
+          ) : (
+            <>
+              <span className="sdot"></span> Ready
+            </>
+          )}
+        </div>
+        <div className="si">
+          {currentProjectName && <span style={{ color: 'var(--accent)' }}>{currentProjectName}</span>}
         </div>
         <div className="si">Nodes: <span className="v">{tree.length}</span></div>
         <div className="si" style={{ marginLeft: 'auto' }}>
@@ -174,6 +257,8 @@ function App() {
         onClose={() => setShowAddDialog(false)}
         parentId={selectedNodeId}
       />
+
+      <ProjectManager isOpen={showProjectManager} onClose={() => setShowProjectManager(false)} />
 
       <GlobalDropZone />
     </div>

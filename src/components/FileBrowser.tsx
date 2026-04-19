@@ -13,9 +13,9 @@ export default function FileBrowser() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'date' | 'size'>('name');
 
-  const loadData = () => {
-    let folders = assetManager.listFolders(currentFolder);
-    let assets = assetManager.getAssetsInFolder(currentFolder);
+  const loadData = async () => {
+    let folders = await assetManager.listFolders(currentFolder);
+    let assets = await assetManager.getAssetsInFolder(currentFolder);
 
     // Filter by search
     if (searchQuery) {
@@ -38,18 +38,33 @@ export default function FileBrowser() {
     return { folders, assets };
   };
 
-  const [data, setData] = React.useState(loadData());
+  const [data, setData] = React.useState<{ folders: AssetFolder[]; assets: Asset[] }>({ folders: [], assets: [] });
 
   React.useEffect(() => {
-    setData(loadData());
+    // Immediate load when folder changes
+    loadData().then(setData);
 
     const handleAssetsUpdated = () => {
-      setData(loadData());
+      loadData().then(setData);
     };
 
+    // Refresh when window gains focus
+    const handleFocus = () => {
+      loadData().then(setData);
+    };
+
+    // Poll for changes every 500ms
+    const interval = setInterval(() => {
+      loadData().then(setData);
+    }, 500);
+
     window.addEventListener('assets-updated', handleAssetsUpdated);
+    window.addEventListener('focus', handleFocus);
+
     return () => {
       window.removeEventListener('assets-updated', handleAssetsUpdated);
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(interval);
     };
   }, [currentFolder, searchQuery, sortBy]);
 
@@ -66,19 +81,21 @@ export default function FileBrowser() {
     setSelectedItem(null);
   };
 
-  const handleCreateFolder = () => {
+  const handleCreateFolder = async () => {
     if (!newFolderName.trim()) return;
-    assetManager.createFolder(newFolderName.trim(), currentFolder);
+    await assetManager.createFolder(newFolderName.trim(), currentFolder);
     setNewFolderName('');
     setShowNewFolderDialog(false);
-    setData(loadData());
+    const newData = await loadData();
+    setData(newData);
     window.dispatchEvent(new CustomEvent('assets-updated'));
   };
 
-  const handleDeleteFolder = (folderId: string) => {
+  const handleDeleteFolder = async (folderId: string) => {
     if (window.confirm('Delete this folder and all its contents?')) {
-      assetManager.deleteFolder(folderId);
-      setData(loadData());
+      await assetManager.deleteFolder(folderId);
+      const newData = await loadData();
+      setData(newData);
       window.dispatchEvent(new CustomEvent('assets-updated'));
     }
   };

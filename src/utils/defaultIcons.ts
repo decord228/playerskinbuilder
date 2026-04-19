@@ -6,6 +6,7 @@ const DEFAULT_ICONS = [
   'nextep.svg',
   'overlay.svg',
   'play.svg',
+  'Vector.svg',
   'seasonsandeps.svg',
   'settings.svg',
   'timeback.svg',

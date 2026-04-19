@@ -6,13 +6,13 @@ export const NODE_HIERARCHY = {
     children: ['Control']
   },
   'Control': {
-    children: ['Container', 'Button', 'Label', 'ColorRect', 'HSlider', 'TextureRect', 'VideoStreamPlayer', 'CanvasLayer']
+    children: ['Container', 'Button', 'Label', 'ColorRect', 'HSlider', 'TextureRect', 'VideoStreamPlayer', 'Separator', 'CanvasLayer']
   },
   'Container': {
     children: ['HBoxContainer', 'VBoxContainer', 'PanelContainer', 'MarginContainer', 'AutoHideContainer']
   },
   'Button': {
-    children: ['VolumeButton']
+    children: ['VolumeButton', 'SVGButton']
   }
 };
 
@@ -26,11 +26,13 @@ export const NODE_INHERITANCE: Record<NodeType, string> = {
   'PanelContainer': 'Container',
   'ColorRect': 'Control',
   'Button': 'Control',
+  'SVGButton': 'Button',
   'Label': 'Control',
   'HSlider': 'Control',
   'VolumeButton': 'Button',
   'TextureRect': 'Control',
   'VideoStreamPlayer': 'Control',
+  'Separator': 'Control',
   'Control': 'Node',
 };
 
@@ -43,11 +45,13 @@ export const NODE_TYPES: NodeTypeDefinition[] = [
   { type: 'PanelContainer', icon: 'ic-panel', isC: true, desc: 'Styled panel' },
   { type: 'ColorRect', icon: 'ic-palette', isC: false, desc: 'Color overlay/gradient' },
   { type: 'Button', icon: 'ic-ctrl', isC: false, desc: 'Clickable button' },
+  { type: 'SVGButton', icon: 'ic-sprite', isC: false, desc: 'Pure SVG button (no styles/text)' },
   { type: 'Label', icon: 'ic-label', isC: false, desc: 'Text label' },
   { type: 'HSlider', icon: 'ic-timer', isC: false, desc: 'Horizontal slider' },
   { type: 'VolumeButton', icon: 'ic-volume', isC: false, desc: 'Button with expandable volume slider' },
   { type: 'TextureRect', icon: 'ic-sprite', isC: false, desc: 'Image/texture' },
   { type: 'VideoStreamPlayer', icon: 'ic-video', isC: false, desc: 'Video stream' },
+  { type: 'Separator', icon: 'ic-margin', isC: false, desc: 'Visual separator line' },
   { type: 'Control', icon: 'ic-ctrl', isC: false, desc: 'Base control' },
 ];
 

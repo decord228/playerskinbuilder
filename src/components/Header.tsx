@@ -1,86 +1,28 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import useStore from '../store/useStore';
-import { assetManager } from '../store/assetStore';
+import { useProjectStore } from '../store/useProjectStore';
+import ProjectManager from './ProjectManager';
 import './Header.css';
 
 export default function Header() {
-  const { mode, setMode, loadDefaultScene, resetScene, tree, nidCounter } = useStore();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mode, setMode } = useStore();
+  const { currentProjectName } = useProjectStore();
+  const [showProjectManager, setShowProjectManager] = useState(false);
 
-  const handleReset = () => {
-    if (window.confirm('Reset to default scene? All changes will be lost.')) {
-      loadDefaultScene();
+  const handleReset = async () => {
+    if (!window.confirm('Reset scene to default? This will replace all nodes with the default scene.')) {
+      return;
     }
-  };
-
-  const handleNew = () => {
-    if (window.confirm('Create new empty scene? All changes will be lost.')) {
-      resetScene();
-    }
-  };
-
-  const handleExport = () => {
-    const projectData = {
-      version: '1.0',
-      tree,
-      nidCounter,
-      assets: assetManager.listAssets()
-    };
-
-    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `skin_${Date.now()}.skinbuilder`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImport = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
     try {
-      const text = await file.text();
-      const projectData = JSON.parse(text);
-
-      if (!projectData.tree || !Array.isArray(projectData.tree)) {
-        alert('Invalid project file');
-        return;
-      }
-
-      // Clear existing assets
-      assetManager.clearAll();
-
-      // Import assets
-      if (projectData.assets && Array.isArray(projectData.assets)) {
-        projectData.assets.forEach((asset: any) => {
-          // Manually add to asset store
-          const store = (assetManager as any).store;
-          store.assets[asset.id] = asset;
-        });
-        (assetManager as any).saveToStorage();
-      }
-
-      // Load tree
-      useStore.setState({
-        tree: projectData.tree,
-        nidCounter: projectData.nidCounter || 500,
-        selectedNodeId: null
-      });
-
-      alert('Project loaded successfully!');
+      const response = await fetch('/default_project/project.json');
+      const defaultProject = await response.json();
+      useStore.getState().importProject(defaultProject);
+      console.log('✓ Scene reset to defaults');
     } catch (error) {
-      console.error('Failed to load project:', error);
-      alert('Failed to load project file');
+      console.error('Failed to reset scene:', error);
+      alert('Failed to reset scene');
     }
-
-    // Reset input
-    e.target.value = '';
   };
 
   return (
@@ -90,17 +32,8 @@ export default function Header() {
       </div>
       <div className="hsep" />
       <div className="hmenu">
-        <button onClick={handleNew}>New</button>
+        <button onClick={() => setShowProjectManager(true)}>Projects</button>
         <button onClick={handleReset}>Reset</button>
-        <button onClick={handleExport}>Save</button>
-        <button onClick={handleImport}>Load</button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".skinbuilder,.json"
-          onChange={handleFileSelect}
-          style={{ display: 'none' }}
-        />
       </div>
       <div className="hsep" />
       <div className="hmenu">
@@ -123,6 +56,8 @@ export default function Header() {
           <button className="pb">?</button>
         </div>
       </div>
+
+      <ProjectManager isOpen={showProjectManager} onClose={() => setShowProjectManager(false)} />
     </div>
   );
 }

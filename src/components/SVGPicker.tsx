@@ -1,13 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { assetManager } from '../store/assetStore';
-import './IconPicker.css';
+import './SVGPicker.css';
 
-interface IconPickerProps {
+interface SVGPickerProps {
   value: string;
   onChange: (value: string) => void;
 }
 
-export default function IconPicker({ value, onChange }: IconPickerProps) {
+export default function SVGPicker({ value, onChange }: SVGPickerProps) {
   const [showAssetPicker, setShowAssetPicker] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -26,80 +26,71 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
 
     const assetId = e.dataTransfer.getData('asset-id');
     if (assetId) {
-      // Store the file path directly (e.g., "Frame 2147226027.svg" or "folder/file.svg")
-      onChange(assetId);
+      const asset = assetManager.getAsset(assetId);
+      if (asset && asset.type === 'svg') {
+        // Extract SVG content from data URL
+        const svgContent = atob(asset.data.split(',')[1]);
+        onChange(svgContent);
+      }
     }
   };
 
   const handleClear = () => {
-    onChange('');
+    onChange('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>');
   };
 
   const handleSelectAsset = (assetId: string) => {
-    onChange(`asset:${assetId}`);
-    setShowAssetPicker(false);
+    const asset = assetManager.getAsset(assetId);
+    if (asset && asset.type === 'svg') {
+      const svgContent = atob(asset.data.split(',')[1]);
+      onChange(svgContent);
+      setShowAssetPicker(false);
+    }
   };
 
-  const getPreviewUrl = (): string | null => {
+  const getSvgPreview = (): string | null => {
     if (!value) return null;
 
-    if (value.startsWith('asset:')) {
-      const assetId = value.replace('asset:', '');
-      const asset = assetManager.getAsset(assetId);
-      return asset ? asset.data : null;
-    }
-
-    // Check if it's a file path (e.g., "Frame 2147226027.svg")
-    if (!value.startsWith('data:') && !value.startsWith('http') && !value.startsWith('<svg')) {
-      const asset = assetManager.getAsset(value);
-      return asset ? asset.data : null;
-    }
-
-    // Legacy: direct SVG or URL
-    if (value.startsWith('data:') || value.startsWith('http')) {
-      return value;
-    }
-
-    return null;
+    // Convert SVG string to data URL for preview
+    const encoded = btoa(value);
+    return `data:image/svg+xml;base64,${encoded}`;
   };
 
-  const previewUrl = getPreviewUrl();
-  const assets = assetManager.listAssets();
+  const previewUrl = getSvgPreview();
+  const assets = assetManager.listAssets().filter(a => a.type === 'svg');
 
   return (
-    <div className="icon-picker">
+    <div className="svg-picker">
       <div
-        className={`icon-picker-dropzone ${isDragging ? 'dragging' : ''} ${previewUrl ? 'has-preview' : ''}`}
+        className={`svg-picker-dropzone ${isDragging ? 'dragging' : ''} ${previewUrl ? 'has-preview' : ''}`}
         onClick={() => setShowAssetPicker(true)}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {previewUrl ? (
-          <div className="icon-preview">
-            <img src={previewUrl} alt="Icon preview" />
+          <div className="svg-preview">
+            <img src={previewUrl} alt="SVG preview" />
             <button
-              className="icon-clear"
+              className="svg-clear"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClear();
               }}
-              title="Clear icon"
+              title="Reset to default"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
               </svg>
             </button>
           </div>
         ) : (
-          <div className="icon-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
+          <div className="svg-placeholder">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
             </svg>
-            <span>Select from files</span>
+            <span>Drag SVG from files</span>
           </div>
         )}
       </div>
@@ -108,7 +99,7 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
         <div className="asset-picker-modal" onClick={() => setShowAssetPicker(false)}>
           <div className="asset-picker-content" onClick={(e) => e.stopPropagation()}>
             <div className="asset-picker-header">
-              <span>Select Image</span>
+              <span>Select SVG</span>
               <button onClick={() => setShowAssetPicker(false)}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"/>
@@ -119,7 +110,7 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
             <div className="asset-picker-grid">
               {assets.length === 0 ? (
                 <div className="asset-picker-empty">
-                  <span>No files available. Drag files into the window to upload.</span>
+                  <span>No SVG files available. Drag SVG files into the window to upload.</span>
                 </div>
               ) : (
                 assets.map(asset => (

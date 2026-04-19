@@ -1,5 +1,6 @@
 import { getUIIcon } from '../data/icons';
 import type { TreeNode } from '../types';
+import { interpolate } from 'flubber';
 
 function hexToRgba(hex: string, alpha: number): string {
   // Remove # if present
@@ -120,145 +121,492 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
 
     case 'PanelContainer':
       element = document.createElement('div');
-      element.style.background = props.bg_color || 'rgba(37,39,41,0.8)';
-      element.style.borderRadius = (props.border_radius || '8') + 'px';
-      element.style.padding = (props.padding || '8') + 'px';
-      element.style.display = 'flex';
-      element.style.alignItems = 'center';
-      element.style.justifyContent = 'center';
-      element.style.position = 'relative';
-      element.style.minWidth = '150px';
-      element.style.minHeight = '100px';
-      element.style.overflow = props.clip_contents === 'true' ? 'hidden' : 'visible';
-      if (props.border_color) {
-        element.style.border = `1px solid ${props.border_color}`;
+
+      // Check panel mode
+      const panelMode = props.panel_mode || 'legacy';
+
+      if (panelMode === 'svg') {
+        // SVG mode - pure SVG panel
+        element.className = 'vppanel-svg';
+        element.style.background = 'transparent';
+        element.style.border = 'none';
+        element.style.padding = '0';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
+        element.style.justifyContent = 'center';
+        element.style.position = 'relative';
+        element.style.minWidth = '150px';
+        element.style.minHeight = '100px';
+        element.style.overflow = props.clip_contents === 'true' ? 'hidden' : 'visible';
+
+        // Insert SVG content
+        const svgContent = props.svg_content || '<svg viewBox="0 0 100 100" fill="none"><rect width="100" height="100" fill="rgba(37,39,41,0.8)" rx="8"/></svg>';
+        element.innerHTML = svgContent;
+      } else {
+        // Legacy mode - styled panel
+        element.className = 'vppanel';
+        element.style.background = props.bg_color || 'rgba(37,39,41,0.8)';
+        element.style.borderRadius = (props.border_radius || '8') + 'px';
+        element.style.padding = (props.padding || '8') + 'px';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
+        element.style.justifyContent = 'center';
+        element.style.position = 'relative';
+        element.style.minWidth = '150px';
+        element.style.minHeight = '100px';
+        element.style.overflow = props.clip_contents === 'true' ? 'hidden' : 'visible';
+        if (props.border_color) {
+          element.style.border = `1px solid ${props.border_color}`;
+        }
       }
       break;
 
     case 'Button':
       element = document.createElement('button');
-      element.className = 'vpbtn';
-      element.style.background = props.bg_color || 'rgba(255,255,255,0.1)';
-      element.style.borderRadius = (props.border_radius || '100') + 'px';
-      element.style.color = props.font_color || '#ffffff';
-      element.style.fontSize = (props.font_size || '15') + 'px';
-      element.style.fontFamily = props.font_family || 'Montserrat';
-      element.style.minWidth = '120px';
-      element.style.minHeight = '54px';
+
+      // Check button mode
+      const buttonMode = props.button_mode || 'legacy';
+
+      if (buttonMode === 'svg') {
+        // SVG mode - pure SVG button
+        element.className = 'vpbtn-svg';
+        element.style.background = 'transparent';
+        element.style.border = 'none';
+        element.style.cursor = 'pointer';
+        element.style.padding = '0';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
+        element.style.justifyContent = 'center';
+        element.style.position = 'relative';
+        element.style.minWidth = '48px';
+        element.style.minHeight = '48px';
+        element.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+
+        // Disabled state
+        if (props.disabled === 'true') {
+          element.disabled = true;
+          element.style.cursor = 'not-allowed';
+          element.style.opacity = '0.4';
+        } else {
+          // Hover effect
+          element.addEventListener('mouseenter', () => {
+            element.style.transform = 'scale(1.05)';
+            element.style.opacity = '0.8';
+          });
+          element.addEventListener('mouseleave', () => {
+            element.style.transform = 'scale(1)';
+            element.style.opacity = '1';
+          });
+
+          // Active effect
+          element.addEventListener('mousedown', () => {
+            element.style.transform = 'scale(0.95)';
+          });
+          element.addEventListener('mouseup', () => {
+            element.style.transform = 'scale(1.05)';
+          });
+        }
+
+        // Insert SVG content
+        const svgContent = props.svg_content || '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+        element.innerHTML = svgContent;
+      } else {
+        // Legacy mode - styled button
+        element.className = 'vpbtn';
+        element.style.background = props.bg_color || 'rgba(255,255,255,0.1)';
+        element.style.borderRadius = (props.border_radius || '100') + 'px';
+        element.style.color = props.font_color || '#ffffff';
+        element.style.fontSize = (props.font_size || '15') + 'px';
+        element.style.fontFamily = props.font_family || 'Montserrat';
+        element.style.minWidth = '120px';
+        element.style.minHeight = '54px';
+        element.style.border = 'none';
+        element.style.cursor = 'pointer';
+        element.style.fontWeight = props.font_weight || '600';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
+        element.style.justifyContent = 'center';
+        element.style.gap = (props.gap || '8') + 'px';
+        element.style.transition = 'all 0.2s ease';
+        element.style.position = 'relative';
+        element.style.overflow = 'hidden';
+
+        // Store original colors in dataset
+        element.dataset.bgColor = props.bg_color || 'rgba(255,255,255,0.1)';
+        element.dataset.fontColor = props.font_color || '#ffffff';
+        element.dataset.hoverBg = props.hover_bg_color || 'rgba(255,255,255,0.2)';
+        element.dataset.activeBg = props.active_bg_color || 'rgba(255,255,255,0.15)';
+        element.dataset.disabledBg = props.disabled_bg_color || 'rgba(255,255,255,0.05)';
+        element.dataset.disabledColor = props.disabled_font_color || 'rgba(255,255,255,0.3)';
+
+        // Hover effect
+        element.addEventListener('mouseenter', () => {
+          if (element.disabled) return;
+          element.style.background = element.dataset.hoverBg;
+          element.style.transform = 'scale(1.02)';
+        });
+        element.addEventListener('mouseleave', () => {
+          if (element.disabled) return;
+          element.style.background = element.dataset.bgColor;
+          element.style.transform = 'scale(1)';
+        });
+
+        // Active effect
+        element.addEventListener('mousedown', () => {
+          if (element.disabled) return;
+          element.style.background = element.dataset.activeBg;
+          element.style.transform = 'scale(0.98)';
+        });
+        element.addEventListener('mouseup', () => {
+          if (element.disabled) return;
+          element.style.background = element.dataset.hoverBg;
+          element.style.transform = 'scale(1.02)';
+        });
+
+        // Disabled state
+        if (props.disabled === 'true') {
+          element.disabled = true;
+          element.style.background = element.dataset.disabledBg;
+          element.style.color = element.dataset.disabledColor;
+          element.style.cursor = 'not-allowed';
+          element.style.opacity = '0.5';
+        }
+
+        // Show icon if available
+        if (props.icon) {
+          const iconSvg = getUIIcon(props.icon);
+          if (iconSvg) {
+            // Use icon_position to determine layout (row or column)
+            const iconPosition = props.icon_position || 'row';
+
+            if (iconPosition === 'column' || props.icon_label) {
+              element.style.flexDirection = 'column';
+              element.style.gap = (props.icon_label_gap || '4') + 'px';
+
+              const iconWrapper = document.createElement('div');
+              iconWrapper.className = 'btn-icon-wrapper';
+              iconWrapper.style.display = 'flex';
+              iconWrapper.style.alignItems = 'center';
+              iconWrapper.style.justifyContent = 'center';
+              iconWrapper.style.position = 'relative';
+
+              // Setup animation
+              const animationType = props.icon_animation || 'none';
+              const animationDuration = props.animation_duration || '300';
+
+              if (animationType !== 'none') {
+                iconWrapper.style.transition = `all ${animationDuration}ms ease`;
+              }
+
+              iconWrapper.innerHTML = iconSvg;
+
+              // Store toggle state and icons
+              if (props.toggle_mode === 'true' && props.toggle_icon) {
+                const toggleIconSvg = getUIIcon(props.toggle_icon);
+                const initiallyPressed = props.toggle_pressed === 'true';
+
+                iconWrapper.dataset.iconDefault = iconSvg;
+                iconWrapper.dataset.iconToggle = toggleIconSvg || iconSvg;
+                iconWrapper.dataset.animationType = animationType;
+                iconWrapper.dataset.animationDuration = animationDuration;
+                iconWrapper.dataset.toggled = initiallyPressed ? 'true' : 'false';
+                iconWrapper.dataset.syncWithVideo = props.sync_with_video || 'false';
+
+                // Set initial icon based on toggle state
+                if (initiallyPressed && toggleIconSvg) {
+                  iconWrapper.innerHTML = toggleIconSvg;
+                }
+
+                // Add click handler for toggle
+                element.addEventListener('click', () => {
+                  const isToggled = iconWrapper.dataset.toggled === 'true';
+                  const newIcon = isToggled ? iconWrapper.dataset.iconDefault : iconWrapper.dataset.iconToggle;
+                  const duration = parseInt(animationDuration);
+
+                  // Apply animation
+                  switch (animationType) {
+                    case 'fade':
+                      iconWrapper.style.transition = `opacity ${duration}ms ease`;
+                      iconWrapper.style.opacity = '0';
+                      setTimeout(() => {
+                        iconWrapper.innerHTML = newIcon;
+                        iconWrapper.style.opacity = '1';
+                      }, duration / 2);
+                      break;
+
+                    case 'morph':
+                      // Extract SVG paths from old and new icons
+                      const oldSvg = iconWrapper.querySelector('svg');
+                      const tempDiv = document.createElement('div');
+                      tempDiv.innerHTML = newIcon;
+                      const newSvg = tempDiv.querySelector('svg');
+
+                      if (!oldSvg || !newSvg) {
+                        // Fallback to fade if not SVG
+                        iconWrapper.innerHTML = newIcon;
+                        break;
+                      }
+
+                      const oldPath = oldSvg.querySelector('path');
+                      const newPath = newSvg.querySelector('path');
+
+                      if (!oldPath || !newPath) {
+                        // Fallback if no paths found
+                        iconWrapper.innerHTML = newIcon;
+                        break;
+                      }
+
+                      const oldD = oldPath.getAttribute('d');
+                      const newD = newPath.getAttribute('d');
+
+                      if (!oldD || !newD) {
+                        iconWrapper.innerHTML = newIcon;
+                        break;
+                      }
+
+                      try {
+                        // Create interpolator
+                        const interpolator = interpolate(oldD, newD, { maxSegmentLength: 2 });
+
+                        // Animate the path
+                        const startTime = performance.now();
+                        const animate = (currentTime: number) => {
+                          const elapsed = currentTime - startTime;
+                          const progress = Math.min(elapsed / duration, 1);
+
+                          // Easing function (ease-in-out)
+                          const eased = progress < 0.5
+                            ? 2 * progress * progress
+                            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+                          const morphedPath = interpolator(eased);
+                          oldPath.setAttribute('d', morphedPath);
+
+                          if (progress < 1) {
+                            requestAnimationFrame(animate);
+                          } else {
+                            // Replace with final icon
+                            iconWrapper.innerHTML = newIcon;
+                          }
+                        };
+
+                        requestAnimationFrame(animate);
+                      } catch (error) {
+                        // Fallback on error
+                        console.warn('Flubber morph failed:', error);
+                        iconWrapper.innerHTML = newIcon;
+                      }
+                      break;
+                  }
+
+                  iconWrapper.dataset.toggled = isToggled ? 'false' : 'true';
+                });
+              }
+
+              element.appendChild(iconWrapper);
+
+              const labelSpan = document.createElement('span');
+              labelSpan.textContent = props.icon_label || props.text || '';
+              labelSpan.style.fontSize = (props.icon_label_size || '10') + 'px';
+              labelSpan.style.fontWeight = '500';
+              element.appendChild(labelSpan);
+            } else {
+              // Row layout
+              const iconWrapper = document.createElement('div');
+              iconWrapper.className = 'btn-icon-wrapper';
+              iconWrapper.style.display = 'flex';
+              iconWrapper.style.alignItems = 'center';
+              iconWrapper.style.justifyContent = 'center';
+              iconWrapper.style.position = 'relative';
+
+              // Setup animation
+              const animationType = props.icon_animation || 'none';
+              const animationDuration = props.animation_duration || '300';
+
+              if (animationType !== 'none') {
+                iconWrapper.style.transition = `all ${animationDuration}ms ease`;
+              }
+
+              iconWrapper.innerHTML = iconSvg;
+
+              // Store toggle state and icons
+              if (props.toggle_mode === 'true' && props.toggle_icon) {
+                const toggleIconSvg = getUIIcon(props.toggle_icon);
+                const initiallyPressed = props.toggle_pressed === 'true';
+
+                iconWrapper.dataset.iconDefault = iconSvg;
+                iconWrapper.dataset.iconToggle = toggleIconSvg || iconSvg;
+                iconWrapper.dataset.animationType = animationType;
+                iconWrapper.dataset.animationDuration = animationDuration;
+                iconWrapper.dataset.toggled = initiallyPressed ? 'true' : 'false';
+                iconWrapper.dataset.syncWithVideo = props.sync_with_video || 'false';
+
+                // Set initial icon based on toggle state
+                if (initiallyPressed && toggleIconSvg) {
+                  iconWrapper.innerHTML = toggleIconSvg;
+                }
+
+                // Add click handler for toggle
+                element.addEventListener('click', () => {
+                  const isToggled = iconWrapper.dataset.toggled === 'true';
+                  const newIcon = isToggled ? iconWrapper.dataset.iconDefault : iconWrapper.dataset.iconToggle;
+                  const duration = parseInt(animationDuration);
+
+                  // Apply animation
+                  switch (animationType) {
+                    case 'fade':
+                      iconWrapper.style.transition = `opacity ${duration}ms ease`;
+                      iconWrapper.style.opacity = '0';
+                      setTimeout(() => {
+                        iconWrapper.innerHTML = newIcon;
+                        iconWrapper.style.opacity = '1';
+                      }, duration / 2);
+                      break;
+
+                    case 'morph':
+                      // Extract SVG paths from old and new icons
+                      const oldSvg = iconWrapper.querySelector('svg');
+                      const tempDiv = document.createElement('div');
+                      tempDiv.innerHTML = newIcon;
+                      const newSvg = tempDiv.querySelector('svg');
+
+                      if (!oldSvg || !newSvg) {
+                        // Fallback to fade if not SVG
+                        iconWrapper.innerHTML = newIcon;
+                        break;
+                      }
+
+                      const oldPath = oldSvg.querySelector('path');
+                      const newPath = newSvg.querySelector('path');
+
+                      if (!oldPath || !newPath) {
+                        // Fallback if no paths found
+                        iconWrapper.innerHTML = newIcon;
+                        break;
+                      }
+
+                      const oldD = oldPath.getAttribute('d');
+                      const newD = newPath.getAttribute('d');
+
+                      if (!oldD || !newD) {
+                        iconWrapper.innerHTML = newIcon;
+                        break;
+                      }
+
+                      try {
+                        // Create interpolator
+                        const interpolator = interpolate(oldD, newD, { maxSegmentLength: 2 });
+
+                        // Animate the path
+                        const startTime = performance.now();
+                        const animate = (currentTime: number) => {
+                          const elapsed = currentTime - startTime;
+                          const progress = Math.min(elapsed / duration, 1);
+
+                          // Easing function (ease-in-out)
+                          const eased = progress < 0.5
+                            ? 2 * progress * progress
+                            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+                          const morphedPath = interpolator(eased);
+                          oldPath.setAttribute('d', morphedPath);
+
+                          if (progress < 1) {
+                            requestAnimationFrame(animate);
+                          } else {
+                            // Replace with final icon
+                            iconWrapper.innerHTML = newIcon;
+                          }
+                        };
+
+                        requestAnimationFrame(animate);
+                      } catch (error) {
+                        // Fallback on error
+                        console.warn('Flubber morph failed:', error);
+                        iconWrapper.innerHTML = newIcon;
+                      }
+                      break;
+                  }
+
+                  iconWrapper.dataset.toggled = isToggled ? 'false' : 'true';
+                });
+              }
+
+              element.appendChild(iconWrapper);
+
+              // Add text if present alongside icon
+              if (props.text) {
+                const textSpan = document.createElement('span');
+                textSpan.textContent = props.text;
+                element.appendChild(textSpan);
+              }
+            }
+          }
+        } else {
+          element.textContent = props.text || 'Button';
+        }
+
+        // Apply size_flags for alignment
+        const sizeFlag = props.size_flags_horizontal || 'FILL';
+        if (sizeFlag === 'SHRINK_BEGIN') {
+          element.style.flexShrink = '0';
+          element.style.marginRight = 'auto';
+        } else if (sizeFlag === 'SHRINK_END') {
+          element.style.flexShrink = '0';
+          element.style.marginLeft = 'auto';
+        } else if (sizeFlag === 'SHRINK_CENTER') {
+          element.style.flexShrink = '0';
+          element.style.margin = '0 auto';
+        } else if (sizeFlag === 'EXPAND_FILL') {
+          element.style.flex = '1';
+        }
+      }
+      break;
+
+    case 'SVGButton':
+      element = document.createElement('button');
+      element.className = 'vpbtn-svg';
+      element.style.background = 'transparent';
       element.style.border = 'none';
       element.style.cursor = 'pointer';
-      element.style.fontWeight = props.font_weight || '600';
+      element.style.padding = '0';
       element.style.display = 'flex';
       element.style.alignItems = 'center';
       element.style.justifyContent = 'center';
-      element.style.gap = (props.gap || '8') + 'px';
-      element.style.transition = 'all 0.2s ease';
       element.style.position = 'relative';
-      element.style.overflow = 'hidden';
-
-      // Store original colors in dataset
-      element.dataset.bgColor = props.bg_color || 'rgba(255,255,255,0.1)';
-      element.dataset.fontColor = props.font_color || '#ffffff';
-      element.dataset.hoverBg = props.hover_bg_color || 'rgba(255,255,255,0.2)';
-      element.dataset.activeBg = props.active_bg_color || 'rgba(255,255,255,0.15)';
-      element.dataset.disabledBg = props.disabled_bg_color || 'rgba(255,255,255,0.05)';
-      element.dataset.disabledColor = props.disabled_font_color || 'rgba(255,255,255,0.3)';
-
-      // Hover effect
-      element.addEventListener('mouseenter', () => {
-        if (element.disabled) return;
-        element.style.background = element.dataset.hoverBg;
-        element.style.transform = 'scale(1.02)';
-      });
-      element.addEventListener('mouseleave', () => {
-        if (element.disabled) return;
-        element.style.background = element.dataset.bgColor;
-        element.style.transform = 'scale(1)';
-      });
-
-      // Active effect
-      element.addEventListener('mousedown', () => {
-        if (element.disabled) return;
-        element.style.background = element.dataset.activeBg;
-        element.style.transform = 'scale(0.98)';
-      });
-      element.addEventListener('mouseup', () => {
-        if (element.disabled) return;
-        element.style.background = element.dataset.hoverBg;
-        element.style.transform = 'scale(1.02)';
-      });
+      element.style.minWidth = '48px';
+      element.style.minHeight = '48px';
+      element.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
 
       // Disabled state
       if (props.disabled === 'true') {
         element.disabled = true;
-        element.style.background = element.dataset.disabledBg;
-        element.style.color = element.dataset.disabledColor;
         element.style.cursor = 'not-allowed';
-        element.style.opacity = '0.5';
-      }
-
-      // Show icon if available
-      if (props.icon) {
-        const iconSvg = getUIIcon(props.icon);
-        if (iconSvg) {
-          // Use icon_position to determine layout (row or column)
-          const iconPosition = props.icon_position || 'row';
-
-          if (iconPosition === 'column' || props.icon_label) {
-            element.style.flexDirection = 'column';
-            element.style.gap = (props.icon_label_gap || '4') + 'px';
-
-            const iconWrapper = document.createElement('div');
-            iconWrapper.className = 'btn-icon-wrapper';
-            iconWrapper.style.display = 'flex';
-            iconWrapper.style.alignItems = 'center';
-            iconWrapper.style.justifyContent = 'center';
-            iconWrapper.style.transition = 'transform 0.2s ease';
-            iconWrapper.innerHTML = iconSvg;
-            element.appendChild(iconWrapper);
-
-            const labelSpan = document.createElement('span');
-            labelSpan.textContent = props.icon_label || props.text || '';
-            labelSpan.style.fontSize = (props.icon_label_size || '10') + 'px';
-            labelSpan.style.fontWeight = '500';
-            element.appendChild(labelSpan);
-          } else {
-            // Row layout
-            const iconWrapper = document.createElement('div');
-            iconWrapper.className = 'btn-icon-wrapper';
-            iconWrapper.style.display = 'flex';
-            iconWrapper.style.alignItems = 'center';
-            iconWrapper.style.justifyContent = 'center';
-            iconWrapper.style.transition = 'transform 0.2s ease';
-            iconWrapper.innerHTML = iconSvg;
-            element.appendChild(iconWrapper);
-
-            // Add text if present alongside icon
-            if (props.text) {
-              const textSpan = document.createElement('span');
-              textSpan.textContent = props.text;
-              element.appendChild(textSpan);
-            }
-          }
-        }
+        element.style.opacity = '0.4';
       } else {
-        element.textContent = props.text || 'Button';
+        // Hover effect
+        element.addEventListener('mouseenter', () => {
+          element.style.transform = 'scale(1.05)';
+          element.style.opacity = '0.8';
+        });
+        element.addEventListener('mouseleave', () => {
+          element.style.transform = 'scale(1)';
+          element.style.opacity = '1';
+        });
+
+        // Active effect
+        element.addEventListener('mousedown', () => {
+          element.style.transform = 'scale(0.95)';
+        });
+        element.addEventListener('mouseup', () => {
+          element.style.transform = 'scale(1.05)';
+        });
       }
 
-      // Apply size_flags for alignment
-      const sizeFlag = props.size_flags_horizontal || 'FILL';
-      if (sizeFlag === 'SHRINK_BEGIN') {
-        element.style.flexShrink = '0';
-        element.style.marginRight = 'auto';
-      } else if (sizeFlag === 'SHRINK_END') {
-        element.style.flexShrink = '0';
-        element.style.marginLeft = 'auto';
-      } else if (sizeFlag === 'SHRINK_CENTER') {
-        element.style.flexShrink = '0';
-        element.style.margin = '0 auto';
-      } else if (sizeFlag === 'EXPAND_FILL') {
-        element.style.flex = '1';
-      }
+      // Insert SVG content
+      const svgContent = props.svg_content || '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+      element.innerHTML = svgContent;
+
       break;
 
     case 'Label':
@@ -532,6 +880,40 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
       }
       break;
 
+    case 'Separator':
+      element = document.createElement('div');
+      element.style.display = 'flex';
+      element.style.alignItems = 'center';
+      element.style.justifyContent = 'center';
+      element.style.position = 'relative';
+      element.style.flexShrink = '0';
+
+      const separation = parseFloat(props.separation || '8');
+      const showLine = props.show_line !== 'false';
+
+      // Set height based on separation
+      element.style.height = separation + 'px';
+      element.style.minHeight = separation + 'px';
+      element.style.width = '100%';
+
+      if (showLine) {
+        const line = document.createElement('div');
+        line.style.background = props.line_color || 'rgba(255,255,255,0.2)';
+        line.style.position = 'absolute';
+
+        const lineThickness = parseFloat(props.line_thickness || '1');
+
+        // Horizontal line
+        line.style.width = '100%';
+        line.style.height = lineThickness + 'px';
+        line.style.left = '0';
+        line.style.top = '50%';
+        line.style.transform = 'translateY(-50%)';
+
+        element.appendChild(line);
+      }
+      break;
+
     default:
       element = document.createElement('div');
       break;
@@ -576,6 +958,12 @@ export function applyNodeStyles(element: HTMLElement, node: TreeNode, tree: Tree
   if (parentIsFlexContainer && !hasExplicitAnchors) {
     // Flex positioning - no explicit anchors in flex container
     element.style.position = 'relative';
+
+    // Apply offsets as margins in flex containers
+    if (ol !== 0) element.style.marginLeft = `${ol}px`;
+    if (ot !== 0) element.style.marginTop = `${ot}px`;
+    if (or !== 0) element.style.marginRight = `${or}px`;
+    if (ob !== 0) element.style.marginBottom = `${ob}px`;
 
     // Apply size_flags for flex children
     const sizeH = props.size_flags_horizontal || 'FILL';

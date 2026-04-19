@@ -1,7 +1,130 @@
 import type { TreeNode } from '../types';
+import { interpolate } from 'flubber';
+
+// Helper function to apply icon animation
+function applyIconAnimation(iconWrapper: HTMLElement, newIcon: string, animationType: string, animationDuration: string) {
+  const duration = parseInt(animationDuration);
+
+  switch (animationType) {
+    case 'fade':
+      iconWrapper.style.transition = `opacity ${duration}ms ease`;
+      iconWrapper.style.opacity = '0';
+      setTimeout(() => {
+        iconWrapper.innerHTML = newIcon;
+        iconWrapper.style.opacity = '1';
+      }, duration / 2);
+      break;
+
+    case 'morph':
+      // Extract SVG paths from old and new icons
+      const oldSvg = iconWrapper.querySelector('svg');
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = newIcon;
+      const newSvg = tempDiv.querySelector('svg');
+
+      if (!oldSvg || !newSvg) {
+        // Fallback to fade if not SVG
+        iconWrapper.innerHTML = newIcon;
+        return;
+      }
+
+      const oldPath = oldSvg.querySelector('path');
+      const newPath = newSvg.querySelector('path');
+
+      if (!oldPath || !newPath) {
+        // Fallback if no paths found
+        iconWrapper.innerHTML = newIcon;
+        return;
+      }
+
+      const oldD = oldPath.getAttribute('d');
+      const newD = newPath.getAttribute('d');
+
+      if (!oldD || !newD) {
+        iconWrapper.innerHTML = newIcon;
+        return;
+      }
+
+      try {
+        // Create interpolator
+        const interpolator = interpolate(oldD, newD, { maxSegmentLength: 2 });
+
+        // Animate the path
+        const startTime = performance.now();
+        const animate = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // Easing function (ease-in-out)
+          const eased = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+          const morphedPath = interpolator(eased);
+          oldPath.setAttribute('d', morphedPath);
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            // Replace with final icon
+            iconWrapper.innerHTML = newIcon;
+          }
+        };
+
+        requestAnimationFrame(animate);
+      } catch (error) {
+        // Fallback on error
+        console.warn('Flubber morph failed:', error);
+        iconWrapper.innerHTML = newIcon;
+      }
+      break;
+
+    default:
+      iconWrapper.innerHTML = newIcon;
+  }
+}
 
 export function enableTestMode(tree: TreeNode[], videoElement: HTMLVideoElement | null) {
   if (!videoElement) return;
+
+  // Sync buttons with video state on play/pause events
+  const syncButtonsWithVideo = () => {
+    tree.forEach(node => {
+      if (node.type === 'Button' && node.props.sync_with_video === 'true') {
+        const el = document.getElementById(`node_${node.id}`);
+        if (!el) return;
+
+        const iconWrapper = el.querySelector('.btn-icon-wrapper') as HTMLElement;
+        if (!iconWrapper || !iconWrapper.dataset.iconToggle) return;
+
+        const isPlaying = !videoElement.paused;
+        const isToggled = iconWrapper.dataset.toggled === 'true';
+
+        // Sync state: playing = toggled, paused = not toggled
+        if (isPlaying && !isToggled) {
+          // Switch to toggle icon (pause)
+          const newIcon = iconWrapper.dataset.iconToggle;
+          const animationType = iconWrapper.dataset.animationType || 'none';
+          const animationDuration = iconWrapper.dataset.animationDuration || '300';
+
+          applyIconAnimation(iconWrapper, newIcon, animationType, animationDuration);
+          iconWrapper.dataset.toggled = 'true';
+        } else if (!isPlaying && isToggled) {
+          // Switch to default icon (play)
+          const newIcon = iconWrapper.dataset.iconDefault;
+          const animationType = iconWrapper.dataset.animationType || 'none';
+          const animationDuration = iconWrapper.dataset.animationDuration || '300';
+
+          applyIconAnimation(iconWrapper, newIcon, animationType, animationDuration);
+          iconWrapper.dataset.toggled = 'false';
+        }
+      }
+    });
+  };
+
+  // Listen to video events
+  videoElement.addEventListener('play', syncButtonsWithVideo);
+  videoElement.addEventListener('pause', syncButtonsWithVideo);
 
   tree.forEach(node => {
     const el = document.getElementById(`node_${node.id}`);
@@ -29,27 +152,10 @@ export function enableTestMode(tree: TreeNode[], videoElement: HTMLVideoElement 
         if (buttonAction === 'play') {
           if (videoElement.paused) {
             videoElement.play();
-            // Change icon to pause
-            const iconWrapper = el.querySelector('.btn-icon-wrapper') as HTMLElement;
-            if (iconWrapper) {
-              iconWrapper.style.opacity = '0';
-              setTimeout(() => {
-                iconWrapper.innerHTML = '<svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="4" width="4" height="15" fill="white"/><rect x="13" y="4" width="4" height="15" fill="white"/></svg>';
-                iconWrapper.style.opacity = '1';
-              }, 100);
-            }
           } else {
             videoElement.pause();
-            // Change icon to play
-            const iconWrapper = el.querySelector('.btn-icon-wrapper') as HTMLElement;
-            if (iconWrapper) {
-              iconWrapper.style.opacity = '0';
-              setTimeout(() => {
-                iconWrapper.innerHTML = '<svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.1584 8.45605C20.7146 8.74977 21.1798 9.18823 21.5042 9.72445C21.8286 10.2607 22 10.8744 22 11.5C22 12.1256 21.8286 12.7394 21.5042 13.2756C21.1798 13.8118 20.7146 14.2503 20.1584 14.544L5.32302 22.5558C2.9342 23.8472 0 22.1682 0 19.513V3.4882C0 0.831779 2.9342 -0.846021 5.32302 0.44309L20.1584 8.45605Z" fill="white"/></svg>';
-                iconWrapper.style.opacity = '1';
-              }, 100);
-            }
           }
+          // State sync happens automatically via video events if sync_with_video is enabled
         }
         // Rewind button
         else if (buttonAction === 'rewind') {
