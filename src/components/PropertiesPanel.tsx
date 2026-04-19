@@ -2,6 +2,7 @@ import React from 'react';
 import useStore from '../store/useStore';
 import { getPropSections } from '../data/propertySystem';
 import { getNodeType } from '../data/nodeTypes';
+import { getTypeIcon } from '../data/icons';
 import { applyPropertyChange } from '../utils/propertyApplier';
 import './PropertiesPanel.css';
 
@@ -182,7 +183,13 @@ export default function PropertiesPanel() {
   return (
     <div className="properties-panel">
       <div className="proph">
-        <span className="proptitle">Inspector</span>
+        <div className="proph-left">
+          <div
+            className="proph-icon"
+            dangerouslySetInnerHTML={{ __html: getTypeIcon(selectedNode.type) }}
+          />
+          <span className="proptitle">Inspector</span>
+        </div>
         <span className="proptype">{selectedNode.type}</span>
       </div>
       <div className="propscroll">

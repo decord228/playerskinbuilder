@@ -15,6 +15,29 @@
   flex-shrink: 0;
 }
 
+.proph-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proph-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon);
+  background: var(--bg-darkest);
+  border-radius: 4px;
+}
+
+.proph-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 .proptitle {
   font-size: 12px;
   font-weight: 600;
