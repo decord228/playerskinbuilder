@@ -37,11 +37,11 @@ export default function NodeOverlays() {
       const nodeRect = element.getBoundingClientRect();
       const viewportRect = viewport.getBoundingClientRect();
 
-      // Calculate position relative to viewport (in canvas coordinates)
-      const x = nodeRect.left - viewportRect.left;
-      const y = nodeRect.top - viewportRect.top;
-      const w = nodeRect.width;
-      const h = nodeRect.height;
+      // Calculate position relative to viewport and compensate for zoom
+      const x = (nodeRect.left - viewportRect.left) / zoom;
+      const y = (nodeRect.top - viewportRect.top) / zoom;
+      const w = nodeRect.width / zoom;
+      const h = nodeRect.height / zoom;
 
       const isSelected = node.id === selectedNodeId;
 
@@ -82,27 +82,6 @@ export default function NodeOverlays() {
         ctx.fillRect(x - handleSize/2, y + h/2 - handleSize/2, handleSize, handleSize);
         // Middle-right
         ctx.fillRect(x + w - handleSize/2, y + h/2 - handleSize/2, handleSize, handleSize);
-      } else {
-        // Draw corner markers for non-selected nodes
-        const markerLength = 8;
-        const markerThickness = 1;
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-
-        // Top-left corner
-        ctx.fillRect(x, y, markerLength, markerThickness);
-        ctx.fillRect(x, y, markerThickness, markerLength);
-
-        // Top-right corner
-        ctx.fillRect(x + w - markerLength, y, markerLength, markerThickness);
-        ctx.fillRect(x + w - markerThickness, y, markerThickness, markerLength);
-
-        // Bottom-left corner
-        ctx.fillRect(x, y + h - markerThickness, markerLength, markerThickness);
-        ctx.fillRect(x, y + h - markerLength, markerThickness, markerLength);
-
-        // Bottom-right corner
-        ctx.fillRect(x + w - markerLength, y + h - markerThickness, markerLength, markerThickness);
-        ctx.fillRect(x + w - markerThickness, y + h - markerLength, markerThickness, markerLength);
       }
     });
   }, [tree, selectedNodeId, zoom, pan]);

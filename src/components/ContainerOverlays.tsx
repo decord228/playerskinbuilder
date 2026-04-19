@@ -55,11 +55,11 @@ export default function ContainerOverlays() {
       const nodeRect = element.getBoundingClientRect();
       const viewportRect = viewport.getBoundingClientRect();
 
-      // Calculate position relative to viewport (in canvas coordinates)
-      const x = nodeRect.left - viewportRect.left;
-      const y = nodeRect.top - viewportRect.top;
-      const w = nodeRect.width;
-      const h = nodeRect.height;
+      // Calculate position relative to viewport and compensate for zoom
+      const x = (nodeRect.left - viewportRect.left) / zoom;
+      const y = (nodeRect.top - viewportRect.top) / zoom;
+      const w = nodeRect.width / zoom;
+      const h = nodeRect.height / zoom;
 
       // Skip if element is outside viewport or has invalid dimensions
       if (w <= 0 || h <= 0 || x + w < 0 || y + h < 0 || x > canvas.width || y > canvas.height) return;
@@ -147,8 +147,8 @@ export default function ContainerOverlays() {
 
             const childRect = childEl.getBoundingClientRect();
             const viewportRect = viewport.getBoundingClientRect();
-            const cx = childRect.left - viewportRect.left;
-            const cy = childRect.top - viewportRect.top;
+            const cx = (childRect.left - viewportRect.left) / zoom;
+            const cy = (childRect.top - viewportRect.top) / zoom;
 
             // Get previous visible child for accurate gap calculation
             const prevChildId = visibleChildren[idx - 1];
@@ -159,7 +159,7 @@ export default function ContainerOverlays() {
 
             if (node.type === 'HBoxContainer') {
               // Vertical line between children
-              const prevRight = prevChildRect.right - viewportRect.left;
+              const prevRight = (prevChildRect.right - viewportRect.left) / zoom;
               const actualGap = cx - prevRight;
 
               if (actualGap > 1) {
@@ -180,7 +180,7 @@ export default function ContainerOverlays() {
               }
             } else {
               // Horizontal line between children
-              const prevBottom = prevChildRect.bottom - viewportRect.top;
+              const prevBottom = (prevChildRect.bottom - viewportRect.top) / zoom;
               const actualGap = cy - prevBottom;
 
               if (actualGap > 1) {
