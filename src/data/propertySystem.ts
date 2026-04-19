@@ -123,6 +123,7 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         name: 'Button',
         fields: [
           { key: 'text', type: 'text', def: 'Button' },
+          { key: 'action', type: 'select', def: 'none', opts: ['none', 'play', 'rewind', 'forward', 'next', 'fullscreen'] },
           { key: 'icon', type: 'text', def: '' },
           { key: 'icon_label', type: 'text', def: '' },
           { key: 'icon_label_size', type: 'text', def: '15' },

@@ -239,6 +239,7 @@ export function buildDefaultScene(): TreeNode[] {
   const pp = mk('playpause', 'PlayPause', 'Button', lbc.id, false);
   pp.props = {
     text: '',
+    action: 'play',
     disabled: 'false',
     flat: 'false',
     alignment: 'CENTER',
@@ -257,6 +258,7 @@ export function buildDefaultScene(): TreeNode[] {
   const rw = mk('secback', 'Rewind10', 'Button', lbc.id, false);
   rw.props = {
     text: '',
+    action: 'rewind',
     disabled: 'false',
     flat: 'false',
     alignment: 'CENTER',
@@ -277,6 +279,7 @@ export function buildDefaultScene(): TreeNode[] {
   const fw = mk('secforward', 'Forward10', 'Button', lbc.id, false);
   fw.props = {
     text: '',
+    action: 'forward',
     disabled: 'false',
     flat: 'false',
     alignment: 'CENTER',
@@ -427,6 +430,7 @@ export function buildDefaultScene(): TreeNode[] {
   const fs = mk('fullscreen', 'Fullscreen', 'Button', rbc.id, false);
   fs.props = {
     text: '',
+    action: 'fullscreen',
     disabled: 'false',
     flat: 'false',
     alignment: 'CENTER',

@@ -14,12 +14,15 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
       break;
 
     case 'VideoStreamPlayer':
-      element = document.createElement('div');
+      element = document.createElement('video');
+      element.style.width = '100%';
+      element.style.height = '100%';
+      element.style.objectFit = 'contain';
       element.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)';
-      element.style.display = 'flex';
-      element.style.alignItems = 'center';
-      element.style.justifyContent = 'center';
-      element.innerHTML = '<div style="font-size:48px;font-weight:700;color:rgba(255,255,255,0.05);letter-spacing:8px;user-select:none">VIDEO STREAM</div>';
+      (element as HTMLVideoElement).controls = false;
+      (element as HTMLVideoElement).playsInline = true;
+      // Add placeholder text for edit mode
+      element.setAttribute('poster', 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"%3E%3Crect width="1920" height="1080" fill="%231a1a1a"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" fill="rgba(255,255,255,0.05)" font-size="48" font-weight="700" letter-spacing="8"%3EVIDEO STREAM%3C/text%3E%3C/svg%3E');
       break;
 
     case 'AutoHideContainer':

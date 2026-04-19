@@ -9,7 +9,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import './App.css';
 
 function App() {
-  const { tree, loadDefaultScene, selectedNodeId } = useStore();
+  const { tree, loadDefaultScene, selectedNodeId, mode } = useStore();
   const [showAddDialog, setShowAddDialog] = useState(false);
 
   useKeyboardShortcuts();
@@ -28,29 +28,37 @@ function App() {
     <div className="app">
       <Header />
       <div className="main">
-        <div className="panel-left">
-          <div className="ph">
-            <div className="ph-top">
-              <div className="tabbar">
-                <div className="tab active">Scene</div>
-                <div className="tab-actions">
-                  <button className="ib" title="Add Node" onClick={handleAddNode}>+</button>
+        {mode === 'edit' && (
+          <>
+            <div className="panel-left">
+              <div className="ph">
+                <div className="ph-top">
+                  <div className="tabbar">
+                    <div className="tab active">Scene</div>
+                    <div className="tab-actions">
+                      <button className="ib" title="Add Node" onClick={handleAddNode}>+</button>
+                    </div>
+                  </div>
+                  <Outliner />
                 </div>
               </div>
-              <Outliner />
             </div>
-          </div>
-        </div>
 
-        <div className="resv" id="resizeLeft"></div>
+            <div className="resv" id="resizeLeft"></div>
+          </>
+        )}
 
         <Viewport />
 
-        <div className="resv" id="resizeRight"></div>
+        {mode === 'edit' && (
+          <>
+            <div className="resv" id="resizeRight"></div>
 
-        <div className="panel-right">
-          <PropertiesPanel />
-        </div>
+            <div className="panel-right">
+              <PropertiesPanel />
+            </div>
+          </>
+        )}
       </div>
 
       <div className="statusbar">
