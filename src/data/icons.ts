@@ -31,11 +31,29 @@ export const UI_ICONS = {
 };
 
 import type { NodeType } from '../types';
+import { assetManager } from '../store/assetStore';
 
 export function getTypeIcon(type: NodeType): string {
   return TYPE_ICONS[type] || TYPE_ICONS['Control'];
 }
 
 export function getUIIcon(name: string): string {
+  // Check if it's an asset reference
+  if (name.startsWith('asset:')) {
+    const assetId = name.replace('asset:', '');
+    const asset = assetManager.getAsset(assetId);
+    if (asset && asset.type === 'svg') {
+      // Decode base64 SVG to string
+      const base64 = asset.data.split(',')[1];
+      if (base64) {
+        try {
+          return atob(base64);
+        } catch (e) {
+          console.error('Failed to decode SVG asset:', e);
+        }
+      }
+    }
+  }
+
   return UI_ICONS[name] || '';
 }

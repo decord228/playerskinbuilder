@@ -1,6 +1,18 @@
 import { getUIIcon } from '../data/icons';
 import type { TreeNode } from '../types';
 
+function hexToRgba(hex: string, alpha: number): string {
+  // Remove # if present
+  hex = hex.replace('#', '');
+
+  // Parse hex values
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement {
   const nodeType = node.type;
   let element;
@@ -189,8 +201,10 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
       if (props.icon) {
         const iconSvg = getUIIcon(props.icon);
         if (iconSvg) {
-          // If icon_label exists, use column layout
-          if (props.icon_label) {
+          // Use icon_position to determine layout (row or column)
+          const iconPosition = props.icon_position || 'row';
+
+          if (iconPosition === 'column' || props.icon_label) {
             element.style.flexDirection = 'column';
             element.style.gap = (props.icon_label_gap || '4') + 'px';
 
@@ -204,12 +218,12 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
             element.appendChild(iconWrapper);
 
             const labelSpan = document.createElement('span');
-            labelSpan.textContent = props.icon_label;
+            labelSpan.textContent = props.icon_label || props.text || '';
             labelSpan.style.fontSize = (props.icon_label_size || '10') + 'px';
             labelSpan.style.fontWeight = '500';
             element.appendChild(labelSpan);
           } else {
-            // No icon_label, use row layout
+            // Row layout
             const iconWrapper = document.createElement('div');
             iconWrapper.className = 'btn-icon-wrapper';
             iconWrapper.style.display = 'flex';
@@ -249,7 +263,20 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
 
     case 'Label':
       element = document.createElement('div');
-      element.textContent = props.text || 'Label';
+
+      // Handle display mode
+      if (props.display_mode === 'time_remaining') {
+        // Calculate time remaining (placeholder logic)
+        const totalSeconds = 3838; // From timeline max_value
+        const currentSeconds = 677; // From timeline value
+        const remainingSeconds = totalSeconds - currentSeconds;
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+        element.textContent = `-${minutes}:${seconds.toString().padStart(2, '0')}`;
+      } else {
+        element.textContent = props.text || 'Label';
+      }
+
       element.style.color = props.font_color || '#ffffff';
       element.style.fontSize = (props.font_size || '14') + 'px';
       element.style.fontFamily = 'Montserrat, sans-serif';
@@ -475,13 +502,23 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
       element = document.createElement('div');
       if (props.gradient_enabled === 'true') {
         const angle = props.gradient_angle || '180';
-        const start = props.gradient_start || 'rgba(0,0,0,0.8)';
-        const end = props.gradient_end || 'rgba(0,0,0,0)';
+
+        // Apply alpha to gradient colors
+        const startColor = props.gradient_start || '#000000';
+        const startAlpha = props.gradient_start_alpha || '0.9';
+        const startRgba = hexToRgba(startColor, parseFloat(startAlpha));
+
+        const endColor = props.gradient_end || '#000000';
+        const endAlpha = props.gradient_end_alpha || '0';
+        const endRgba = hexToRgba(endColor, parseFloat(endAlpha));
+
         const startPos = props.gradient_start_pos || '0';
-        const endPos = props.gradient_end_pos || '100';
-        element.style.background = `linear-gradient(${angle}deg, ${start} ${startPos}%, ${end} ${endPos}%)`;
+        const endPos = props.gradient_end_pos || '50';
+        element.style.background = `linear-gradient(${angle}deg, ${startRgba} ${startPos}%, ${endRgba} ${endPos}%)`;
       } else {
-        element.style.background = props.color || 'rgba(0,0,0,0.5)';
+        const color = props.color || '#000000';
+        const alpha = props.color_alpha || '0.5';
+        element.style.background = hexToRgba(color, parseFloat(alpha));
       }
       element.style.pointerEvents = 'none';
       break;

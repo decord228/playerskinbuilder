@@ -15,10 +15,10 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>',
       fields: [
         { type: 'anchor' },
-        { key: 'anchor_left', type: 'text', def: '0' },
-        { key: 'anchor_top', type: 'text', def: '0' },
-        { key: 'anchor_right', type: 'text', def: '0' },
-        { key: 'anchor_bottom', type: 'text', def: '0' },
+        { key: 'anchor_left', type: 'slider', def: '0', min: 0, max: 1, step: 0.01 },
+        { key: 'anchor_top', type: 'slider', def: '0', min: 0, max: 1, step: 0.01 },
+        { key: 'anchor_right', type: 'slider', def: '0', min: 0, max: 1, step: 0.01 },
+        { key: 'anchor_bottom', type: 'slider', def: '0', min: 0, max: 1, step: 0.01 },
       ]
     },
     {
@@ -57,8 +57,8 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8" opacity="0.5"/></svg>',
       fields: [
         { key: 'auto_hide_enabled', label: 'enable auto-hide', type: 'bool', def: 'true' },
-        { key: 'hide_delay', label: 'hide delay (s)', type: 'text', def: '3' },
-        { key: 'fade_duration', label: 'fade duration (s)', type: 'text', def: '0.3' },
+        { key: 'hide_delay', label: 'hide delay (s)', type: 'slider', def: '3', min: 0, max: 10, step: 0.1 },
+        { key: 'fade_duration', label: 'fade duration (s)', type: 'slider', def: '0.3', min: 0, max: 2, step: 0.1 },
         { key: 'show_on_input', label: 'show on input', type: 'bool', def: 'true' },
       ]
     }],
@@ -66,10 +66,10 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       name: 'Margins',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1" stroke-dasharray="2 2"/></svg>',
       fields: [
-        { key: 'margin_left', type: 'text', def: '0' },
-        { key: 'margin_top', type: 'text', def: '0' },
-        { key: 'margin_right', type: 'text', def: '0' },
-        { key: 'margin_bottom', type: 'text', def: '0' },
+        { key: 'margin_left', type: 'slider', def: '0', min: 0, max: 100 },
+        { key: 'margin_top', type: 'slider', def: '0', min: 0, max: 100 },
+        { key: 'margin_right', type: 'slider', def: '0', min: 0, max: 100 },
+        { key: 'margin_bottom', type: 'slider', def: '0', min: 0, max: 100 },
         { type: 'margin_preview' },
         { key: 'clip_contents', type: 'bool', def: 'false' },
       ]
@@ -79,7 +79,7 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="5" height="14" rx="1"/><rect x="10" y="5" width="5" height="14" rx="1"/><rect x="17" y="5" width="4" height="14" rx="1"/></svg>',
       fields: [
         { key: 'alignment', type: 'select', def: 'BEGIN', opts: ['BEGIN', 'CENTER', 'END'] },
-        { key: 'separation', type: 'text', def: '4' },
+        { key: 'separation', type: 'slider', def: '4', min: 0, max: 50 },
         { key: 'clip_contents', type: 'bool', def: 'false' },
       ]
     }],
@@ -88,7 +88,7 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="5" rx="1"/><rect x="5" y="10" width="14" height="5" rx="1"/><rect x="5" y="17" width="14" height="4" rx="1"/></svg>',
       fields: [
         { key: 'alignment', type: 'select', def: 'BEGIN', opts: ['BEGIN', 'CENTER', 'END'] },
-        { key: 'separation', type: 'text', def: '4' },
+        { key: 'separation', type: 'slider', def: '4', min: 0, max: 50 },
         { key: 'clip_contents', type: 'bool', def: 'false' },
       ]
     }],
@@ -98,8 +98,8 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       fields: [
         { key: 'bg_color', label: 'background', type: 'color', def: '#252729' },
         { key: 'border_color', label: 'border', type: 'color', def: '#333537' },
-        { key: 'border_radius', type: 'text', def: '0' },
-        { key: 'padding', type: 'text', def: '8' },
+        { key: 'border_radius', type: 'slider', def: '0', min: 0, max: 50 },
+        { key: 'padding', type: 'slider', def: '8', min: 0, max: 50 },
         { key: 'clip_contents', type: 'bool', def: 'false' },
       ]
     }],
@@ -112,10 +112,10 @@ export function getPropSections(node: TreeNode): PropertySection[] {
           { key: 'hover_bg_color', label: 'hover bg', type: 'color', def: 'rgba(255,255,255,0.2)' },
           { key: 'active_bg_color', label: 'active bg', type: 'color', def: 'rgba(255,255,255,0.15)' },
           { key: 'disabled_bg_color', label: 'disabled bg', type: 'color', def: 'rgba(255,255,255,0.05)' },
-          { key: 'border_radius', label: 'border radius', type: 'text', def: '100' },
+          { key: 'border_radius', label: 'border radius', type: 'slider', def: '100', min: 0, max: 100 },
           { key: 'font_color', label: 'font color', type: 'color', def: '#ffffff' },
           { key: 'disabled_font_color', label: 'disabled font', type: 'color', def: 'rgba(255,255,255,0.3)' },
-          { key: 'font_size', type: 'text', def: '14' },
+          { key: 'font_size', type: 'slider', def: '14', min: 8, max: 32 },
           { key: 'font_family', type: 'select', def: 'Montserrat', opts: ['Montserrat', 'JetBrains Mono', 'Rajdhani', 'system-ui'] },
         ]
       },
@@ -124,16 +124,17 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         fields: [
           { key: 'text', type: 'text', def: 'Button' },
           { key: 'action', type: 'select', def: 'none', opts: ['none', 'play', 'rewind', 'forward', 'next', 'fullscreen'] },
-          { key: 'icon', type: 'text', def: '' },
+          { key: 'icon', type: 'icon_picker', def: '' },
+          { key: 'icon_position', label: 'icon position', type: 'select', def: 'row', opts: ['row', 'column'] },
           { key: 'icon_label', type: 'text', def: '' },
-          { key: 'icon_label_size', type: 'text', def: '15' },
-          { key: 'icon_label_gap', type: 'text', def: '0' },
+          { key: 'icon_label_size', type: 'slider', def: '15', min: 8, max: 24 },
+          { key: 'icon_label_gap', type: 'slider', def: '0', min: 0, max: 20 },
           { key: 'flat', type: 'bool', def: 'false' },
           { key: 'disabled', type: 'bool', def: 'false' },
           { key: 'toggle_mode', type: 'bool', def: 'false' },
           { key: 'alignment', type: 'select', def: 'CENTER', opts: ['LEFT', 'CENTER', 'RIGHT'] },
-          { key: 'gap', type: 'text', def: '8' },
-          { key: 'font_weight', type: 'text', def: '600' },
+          { key: 'gap', type: 'slider', def: '8', min: 0, max: 50 },
+          { key: 'font_weight', type: 'slider', def: '600', min: 100, max: 900, step: 100 },
         ]
       },
     ],
@@ -142,9 +143,10 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h10M4 17h14"/></svg>',
       fields: [
         { key: 'text', type: 'text', def: 'Label' },
+        { key: 'display_mode', label: 'display mode', type: 'select', def: 'text', opts: ['text', 'time_remaining'] },
         { key: 'font_color', label: 'font color', type: 'color', def: '#ffffff' },
-        { key: 'font_size', type: 'text', def: '14' },
-        { key: 'font_weight', type: 'text', def: '500' },
+        { key: 'font_size', type: 'slider', def: '14', min: 8, max: 32 },
+        { key: 'font_weight', type: 'slider', def: '500', min: 100, max: 900, step: 100 },
         { key: 'horizontal_alignment', type: 'select', def: 'LEFT', opts: ['LEFT', 'CENTER', 'RIGHT', 'FILL'] },
         { key: 'autowrap_mode', type: 'select', def: 'OFF', opts: ['OFF', 'WORD', 'WORD_SMART'] },
       ]
@@ -153,18 +155,18 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       name: 'Slider',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="14" cy="12" r="3" fill="currentColor"/></svg>',
       fields: [
-        { key: 'min_value', type: 'text', def: '0' },
-        { key: 'max_value', type: 'text', def: '100' },
-        { key: 'value', type: 'text', def: '0' },
-        { key: 'step', type: 'text', def: '1' },
+        { key: 'min_value', type: 'slider', def: '0', min: 0, max: 1000 },
+        { key: 'max_value', type: 'slider', def: '100', min: 0, max: 10000 },
+        { key: 'value', type: 'slider', def: '0', min: 0, max: 100 },
+        { key: 'step', type: 'slider', def: '1', min: 0.1, max: 100, step: 0.1 },
         { key: 'track_color', label: 'track color', type: 'color', def: 'rgba(255,255,255,0.2)' },
         { key: 'fill_color', label: 'fill color', type: 'color', def: '#ffffff' },
-        { key: 'icon', type: 'text', def: '' },
-        { key: 'icon_size', type: 'text', def: '20' },
-        { key: 'icon_gap', type: 'text', def: '12' },
-        { key: 'track_height', type: 'text', def: '7' },
-        { key: 'track_radius', type: 'text', def: '49' },
-        { key: 'thumb_size', type: 'text', def: '15' },
+        { key: 'icon', type: 'icon_picker', def: '' },
+        { key: 'icon_size', type: 'slider', def: '20', min: 10, max: 50 },
+        { key: 'icon_gap', type: 'slider', def: '12', min: 0, max: 50 },
+        { key: 'track_height', type: 'slider', def: '7', min: 1, max: 20 },
+        { key: 'track_radius', type: 'slider', def: '49', min: 0, max: 50 },
+        { key: 'thumb_size', type: 'slider', def: '15', min: 5, max: 30 },
         { key: 'thumb_color', label: 'thumb color', type: 'color', def: '#ffffff' },
       ]
     }],
@@ -175,14 +177,14 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         fields: [
           { key: 'bg_color', label: 'background', type: 'color', def: 'rgba(255,255,255,0.1)' },
           { key: 'hover_bg_color', label: 'hover bg', type: 'color', def: 'rgba(255,255,255,0.18)' },
-          { key: 'border_radius', label: 'border radius', type: 'text', def: '100' },
+          { key: 'border_radius', label: 'border radius', type: 'slider', def: '100', min: 0, max: 100 },
           { key: 'font_color', label: 'font color', type: 'color', def: '#ffffff' },
         ]
       },
       {
         name: 'Button',
         fields: [
-          { key: 'icon', type: 'text', def: 'volume-2' },
+          { key: 'icon', type: 'icon_picker', def: 'volume-2' },
           { key: 'flat', type: 'bool', def: 'false' },
           { key: 'disabled', type: 'bool', def: 'false' },
         ]
@@ -191,15 +193,15 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         name: 'Slider',
         icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="14" cy="12" r="3" fill="currentColor"/></svg>',
         fields: [
-          { key: 'min_value', type: 'text', def: '0' },
-          { key: 'max_value', type: 'text', def: '100' },
-          { key: 'value', type: 'text', def: '65' },
-          { key: 'step', type: 'text', def: '1' },
+          { key: 'min_value', type: 'slider', def: '0', min: 0, max: 1000 },
+          { key: 'max_value', type: 'slider', def: '100', min: 0, max: 1000 },
+          { key: 'value', type: 'slider', def: '65', min: 0, max: 100 },
+          { key: 'step', type: 'slider', def: '1', min: 0.1, max: 100, step: 0.1 },
           { key: 'track_color', label: 'track color', type: 'color', def: 'rgba(255,255,255,0.25)' },
           { key: 'fill_color', label: 'fill color', type: 'color', def: '#ffffff' },
-          { key: 'track_height', type: 'text', def: '4' },
-          { key: 'track_radius', type: 'text', def: '49' },
-          { key: 'thumb_size', type: 'text', def: '14' },
+          { key: 'track_height', type: 'slider', def: '4', min: 1, max: 20 },
+          { key: 'track_radius', type: 'slider', def: '49', min: 0, max: 50 },
+          { key: 'thumb_size', type: 'slider', def: '14', min: 5, max: 30 },
           { key: 'thumb_color', label: 'thumb color', type: 'color', def: '#ffffff' },
         ]
       },
@@ -207,10 +209,10 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         name: 'VolumeButton',
         icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h8"/></svg>',
         fields: [
-          { key: 'button_slider_gap', label: 'gap between button & slider', type: 'text', def: '10' },
+          { key: 'button_slider_gap', label: 'gap between button & slider', type: 'slider', def: '10', min: 0, max: 50 },
           { key: 'always_show_slider', label: 'always show slider', type: 'bool', def: 'false' },
-          { key: 'expand_duration', label: 'expand duration (ms)', type: 'text', def: '200' },
-          { key: 'slider_width', label: 'slider width', type: 'text', def: '200' },
+          { key: 'expand_duration', label: 'expand duration (ms)', type: 'slider', def: '200', min: 0, max: 1000, step: 50 },
+          { key: 'slider_width', label: 'slider width', type: 'slider', def: '200', min: 50, max: 500 },
         ]
       },
     ],
@@ -218,9 +220,16 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       name: 'ColorRect',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor" opacity="0.3"/><path d="M3 21L21 3" stroke="currentColor" stroke-width="2"/></svg>',
       fields: [
-        { key: 'color', type: 'color', def: 'rgba(0,0,0,0.5)' },
+        { key: 'color', type: 'color', def: '#000000' },
+        { key: 'color_alpha', label: 'alpha', type: 'slider', def: '0.5', min: 0, max: 1, step: 0.01 },
         { key: 'gradient_enabled', type: 'bool', def: 'false' },
-        { type: 'gradient_editor' },
+        { key: 'gradient_angle', label: 'angle', type: 'slider', def: '0', min: 0, max: 360 },
+        { key: 'gradient_start', label: 'start color', type: 'color', def: '#000000' },
+        { key: 'gradient_start_alpha', label: 'start alpha', type: 'slider', def: '0.9', min: 0, max: 1, step: 0.01 },
+        { key: 'gradient_start_pos', label: 'start position', type: 'slider', def: '0', min: 0, max: 100 },
+        { key: 'gradient_end', label: 'end color', type: 'color', def: '#000000' },
+        { key: 'gradient_end_alpha', label: 'end alpha', type: 'slider', def: '0', min: 0, max: 1, step: 0.01 },
+        { key: 'gradient_end_pos', label: 'end position', type: 'slider', def: '50', min: 0, max: 100 },
       ]
     }],
     'TextureRect': [{
@@ -239,7 +248,7 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         { key: 'stream', type: 'text', def: 'null' },
         { key: 'autoplay', type: 'bool', def: 'false' },
         { key: 'paused', type: 'bool', def: 'false' },
-        { key: 'volume_db', type: 'text', def: '0.0' },
+        { key: 'volume_db', type: 'slider', def: '0.0', min: -80, max: 0, step: 0.1 },
         { key: 'expand', type: 'bool', def: 'true' },
         { key: 'bus', type: 'text', def: 'Master' },
       ]

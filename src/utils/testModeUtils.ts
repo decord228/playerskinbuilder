@@ -124,6 +124,19 @@ export function enableTestMode(tree: TreeNode[], videoElement: HTMLVideoElement 
           if (fill && videoElement.duration) {
             fill.style.width = `${(videoElement.currentTime / videoElement.duration) * 100}%`;
           }
+
+          // Update time remaining labels
+          tree.forEach(labelNode => {
+            if (labelNode.type === 'Label' && labelNode.props.display_mode === 'time_remaining') {
+              const labelEl = document.getElementById(`node_${labelNode.id}`);
+              if (labelEl && videoElement.duration) {
+                const remainingSeconds = Math.floor(videoElement.duration - videoElement.currentTime);
+                const minutes = Math.floor(remainingSeconds / 60);
+                const seconds = remainingSeconds % 60;
+                labelEl.textContent = `-${minutes}:${seconds.toString().padStart(2, '0')}`;
+              }
+            }
+          });
         };
       }
     }

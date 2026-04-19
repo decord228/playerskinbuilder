@@ -48,7 +48,8 @@ export type PropertyFieldType =
   | 'size_flags'
   | 'anchor'
   | 'margin_preview'
-  | 'gradient_editor';
+  | 'gradient_editor'
+  | 'icon_picker';
 
 export interface PropertyField {
   key?: string;
@@ -109,6 +110,9 @@ export interface StoreActions {
 }
 
 export type Store = StoreState & StoreActions;
+
+// Re-export asset types
+export type { Asset, AssetStore } from './assets';
 
 // Context menu types
 export interface ContextMenuPosition {

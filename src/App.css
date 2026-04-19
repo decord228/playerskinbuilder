@@ -12,7 +12,7 @@
 }
 
 .panel-left {
-  width: 280px;
+  width: 350px;
   min-width: 180px;
   max-width: 500px;
   background: linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-mid) 100%);
@@ -44,6 +44,27 @@
 
 .ph-top {
   flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+}
+
+.ph-resize {
+  height: 4px;
+  background: var(--border);
+  cursor: ns-resize;
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+
+.ph-resize:hover {
+  background: var(--accent);
+}
+
+.ph-bottom {
+  flex: 0 0 250px;
+  min-height: 100px;
   overflow: hidden;
   display: flex;
   flex-direction: column;

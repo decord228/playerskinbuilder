@@ -1,4 +1,13 @@
 import type { TreeNode, NodeType } from '../types';
+import { assetManager } from '../store/assetStore';
+
+function getAssetByName(name: string): string {
+  const assets = assetManager.listAssets();
+  const asset = assets.find(a => a.name === name);
+  const result = asset ? `asset:${asset.id}` : '';
+  console.log(`getAssetByName("${name}"):`, result, asset ? 'found' : 'NOT FOUND');
+  return result;
+}
 
 export function buildDefaultScene(): TreeNode[] {
   const tree: TreeNode[] = [];
@@ -81,7 +90,16 @@ export function buildDefaultScene(): TreeNode[] {
   // Gradient overlay
   const go = mk('gradient', 'GradientOverlay', 'ColorRect', ahc.id, false);
   go.props = {
-    color: 'linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%)',
+    color: '#000000',
+    color_alpha: '0.5',
+    gradient_enabled: 'true',
+    gradient_angle: '0',
+    gradient_start: '#000000',
+    gradient_start_alpha: '0.9',
+    gradient_start_pos: '0',
+    gradient_end: '#000000',
+    gradient_end_alpha: '0',
+    gradient_end_pos: '50',
     visible: 'true',
     anchor_left: '0',
     anchor_top: '0',
@@ -204,6 +222,7 @@ export function buildDefaultScene(): TreeNode[] {
   const timeLabel = mk('timelabel', 'TimeLabel', 'Label', timelineRow.id, false);
   timeLabel.props = {
     text: '-36:38',
+    display_mode: 'time_remaining',
     visible: 'true',
     font_color: '#ffffff',
     font_size: '16',
@@ -252,7 +271,7 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'play'
+    icon: getAssetByName('play.svg')
   };
 
   const rw = mk('secback', 'Rewind10', 'Button', lbc.id, false);
@@ -270,7 +289,8 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'rewind',
+    icon: getAssetByName('timeback.svg'),
+    icon_position: 'column',
     icon_label: '10',
     icon_label_size: '15',
     icon_label_gap: '0'
@@ -291,7 +311,8 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'forward',
+    icon: getAssetByName('timeforward.svg'),
+    icon_position: 'column',
     icon_label: '10',
     icon_label_size: '15',
     icon_label_gap: '0'
@@ -312,7 +333,7 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'next'
+    icon: getAssetByName('nextep.svg')
   };
 
   // Volume button
@@ -322,7 +343,7 @@ export function buildDefaultScene(): TreeNode[] {
     hover_bg_color: 'rgba(255,255,255,0.18)',
     border_radius: '100',
     font_color: '#ffffff',
-    icon: 'volume-2',
+    icon: getAssetByName('volume.svg'),
     min_value: '0',
     max_value: '100',
     value: '65',
@@ -370,7 +391,8 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'seasons'
+    icon: getAssetByName('seasonsandeps.svg'),
+    icon_position: 'row'
   };
 
   const winp = mk('windowplayback', 'PiP', 'Button', rbc.id, false);
@@ -388,7 +410,7 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'pip'
+    icon: getAssetByName('overlay.svg')
   };
 
   const aud = mk('audioline', 'Audio', 'Button', rbc.id, false);
@@ -406,7 +428,7 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'audio'
+    icon: getAssetByName('mic.svg')
   };
 
   const subs = mk('subtitles', 'Subtitles', 'Button', rbc.id, false);
@@ -424,7 +446,7 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'subtitles'
+    icon: getAssetByName('settings.svg')
   };
 
   const fs = mk('fullscreen', 'Fullscreen', 'Button', rbc.id, false);
@@ -443,7 +465,7 @@ export function buildDefaultScene(): TreeNode[] {
     font_family: 'Montserrat',
     size_flags_horizontal: 'SHRINK_CENTER',
     size_flags_vertical: 'SHRINK_CENTER',
-    icon: 'fullscreen'
+    icon: getAssetByName('fullscreen.svg')
   };
 
   return tree;
