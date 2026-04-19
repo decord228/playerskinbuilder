@@ -8,7 +8,7 @@ import './Viewport.css';
 import './NodeStyles.css';
 
 export default function Viewport() {
-  const { tree, mode, zoom, pan, setZoom, setPan, showContainerOverlays, toggleContainerOverlays } = useStore();
+  const { tree, mode, zoom, pan, setZoom, setPan, showContainerOverlays, toggleContainerOverlays, selectNode } = useStore();
   const canvasRef = useRef(null);
   const wrapperRef = useRef(null);
   const [isPanning, setIsPanning] = useState(false);
@@ -166,7 +166,7 @@ export default function Viewport() {
           1920 × 1080 | Pan: {Math.round(pan.x)}, {Math.round(pan.y)}
         </div>
       </div>
-      <div className="varea" ref={wrapperRef}>
+      <div className="varea" ref={wrapperRef} onClick={() => selectNode(null)}>
         <div className="cwrap">
           <div
             className="cframe"
