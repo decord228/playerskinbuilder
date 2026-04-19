@@ -70,46 +70,46 @@ export default function ContainerOverlays() {
       let borderColor;
       switch (node.type) {
         case 'HBoxContainer':
-          borderColor = 'rgba(255, 100, 100, 0.6)';
+          borderColor = 'rgba(255, 107, 107, 0.85)'; // Soft coral red
           break;
         case 'VBoxContainer':
-          borderColor = 'rgba(100, 255, 100, 0.6)';
+          borderColor = 'rgba(94, 234, 212, 0.85)'; // Teal/cyan
           break;
         case 'PanelContainer':
-          borderColor = 'rgba(100, 100, 255, 0.6)';
+          borderColor = 'rgba(147, 197, 253, 0.85)'; // Soft blue
           break;
         case 'MarginContainer':
-          borderColor = 'rgba(255, 200, 100, 0.6)';
+          borderColor = 'rgba(251, 191, 36, 0.85)'; // Warm amber
           break;
         case 'AutoHideContainer':
-          borderColor = 'rgba(200, 100, 255, 0.6)';
+          borderColor = 'rgba(196, 181, 253, 0.85)'; // Soft purple
           break;
         default:
-          borderColor = 'rgba(255, 255, 255, 0.4)';
+          borderColor = 'rgba(156, 163, 175, 0.7)'; // Neutral gray
       }
 
-      // Draw dashed border
+      // Draw main container border (solid, thicker)
       ctx.strokeStyle = borderColor;
-      ctx.lineWidth = isSelected ? 2 : 1;
-      ctx.setLineDash([4, 4]);
-      ctx.strokeRect(x, y, w, h);
+      ctx.lineWidth = isSelected ? 2 : 1.5;
       ctx.setLineDash([]);
+      ctx.strokeRect(x, y, w, h);
 
-      // Draw corner markers
-      const markerSize = 8;
+      // Draw corner markers (smaller, cleaner)
+      const markerSize = 6;
       ctx.fillStyle = borderColor;
+      const offset = 2;
       // Top-left
-      ctx.fillRect(x - 1, y - 1, markerSize, 2);
-      ctx.fillRect(x - 1, y - 1, 2, markerSize);
+      ctx.fillRect(x - offset, y - offset, markerSize, 1.5);
+      ctx.fillRect(x - offset, y - offset, 1.5, markerSize);
       // Top-right
-      ctx.fillRect(x + w - markerSize + 1, y - 1, markerSize, 2);
-      ctx.fillRect(x + w - 1, y - 1, 2, markerSize);
+      ctx.fillRect(x + w - markerSize + offset, y - offset, markerSize, 1.5);
+      ctx.fillRect(x + w - 1.5 + offset, y - offset, 1.5, markerSize);
       // Bottom-left
-      ctx.fillRect(x - 1, y + h - 1, markerSize, 2);
-      ctx.fillRect(x - 1, y + h - markerSize + 1, 2, markerSize);
+      ctx.fillRect(x - offset, y + h - 1.5 + offset, markerSize, 1.5);
+      ctx.fillRect(x - offset, y + h - markerSize + offset, 1.5, markerSize);
       // Bottom-right
-      ctx.fillRect(x + w - markerSize + 1, y + h - 1, markerSize, 2);
-      ctx.fillRect(x + w - 1, y + h - markerSize + 1, 2, markerSize);
+      ctx.fillRect(x + w - markerSize + offset, y + h - 1.5 + offset, markerSize, 1.5);
+      ctx.fillRect(x + w - 1.5 + offset, y + h - markerSize + offset, 1.5, markerSize);
 
       // Draw type label
       ctx.fillStyle = borderColor;
@@ -135,10 +135,30 @@ export default function ContainerOverlays() {
           return childEl !== null;
         });
 
+        // Draw borders for each child element (thin, subtle)
+        const childBorderColor = borderColor.replace(/0\.\d+\)/, '0.3)'); // More transparent
+        ctx.strokeStyle = childBorderColor;
+        ctx.lineWidth = 0.5;
+        ctx.setLineDash([]);
+
+        visibleChildren.forEach(childId => {
+          const childEl = document.getElementById(`node_${childId}`);
+          if (!childEl) return;
+
+          const childRect = childEl.getBoundingClientRect();
+          const viewportRect = viewport.getBoundingClientRect();
+          const cx = (childRect.left - viewportRect.left) / zoom;
+          const cy = (childRect.top - viewportRect.top) / zoom;
+          const cw = childRect.width / zoom;
+          const ch = childRect.height / zoom;
+
+          ctx.strokeRect(cx, cy, cw, ch);
+        });
+
         if (visibleChildren.length > 1) {
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 1;
-          ctx.setLineDash([2, 2]);
+          ctx.setLineDash([4, 2]);
 
           visibleChildren.forEach((childId, idx) => {
             if (idx === 0) return;
