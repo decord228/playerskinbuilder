@@ -1,0 +1,137 @@
+.node-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.node-video {
+  position: absolute;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-placeholder {
+  font-size: 48px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.05);
+  letter-spacing: 8px;
+  user-select: none;
+}
+
+.node-container {
+  position: absolute;
+}
+
+.node-margincontainer {
+  display: flex;
+}
+
+.node-hboxcontainer,
+.node-vboxcontainer {
+  display: flex;
+}
+
+.node-panelcontainer {
+  display: flex;
+}
+
+.node-colorrect {
+  position: absolute;
+  pointer-events: none;
+}
+
+.vpbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.vpbtn:hover {
+  filter: brightness(1.2);
+}
+
+.vpbtn:active {
+  transform: scale(0.95);
+}
+
+.node-button {
+  white-space: nowrap;
+}
+
+.node-label {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.node-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.slider-track {
+  position: absolute;
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 49px;
+}
+
+.slider-fill {
+  position: absolute;
+  height: 7px;
+  background: #ffffff;
+  border-radius: 49px;
+  width: 50%;
+}
+
+.slider-thumb {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: #ffffff;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+.node-volumebutton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.volume-btn {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+}
+
+.volume-slider {
+  position: relative;
+  width: 200px;
+  height: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.volume-slider .slider-track {
+  height: 4px;
+}
+
+.volume-slider .slider-fill {
+  height: 4px;
+  width: 65%;
+}
+
+.volume-slider .slider-thumb {
+  width: 14px;
+  height: 14px;
+  left: 65%;
+}

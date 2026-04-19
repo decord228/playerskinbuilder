@@ -1,0 +1,245 @@
+.properties-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.proph {
+  height: 40px;
+  background: var(--bg-mid);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.proptitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.proptype {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+.propscroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.propscroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.propscroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.psec {
+  border-bottom: 1px solid var(--border);
+}
+
+.psec-hdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-panel);
+  cursor: pointer;
+  user-select: none;
+}
+
+.psec-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.psec-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.psec-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.psec-body {
+  padding: 8px 12px;
+}
+
+.pitem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.plabel {
+  font-size: 11px;
+  color: var(--text-dim);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.ptextinput {
+  flex: 1;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  outline: none;
+}
+
+.ptextinput:focus {
+  border-color: var(--accent);
+}
+
+.pswitch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 18px;
+  margin-left: auto;
+}
+
+.pswitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.pslider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: 0.2s;
+  border-radius: 18px;
+}
+
+.pslider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+.pswitch input:checked + .pslider {
+  background-color: var(--accent);
+}
+
+.pswitch input:checked + .pslider:before {
+  transform: translateX(18px);
+}
+
+.pcolor-wrap {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.pcolor-picker {
+  width: 32px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.pselect {
+  flex: 1;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  outline: none;
+  cursor: pointer;
+}
+
+.pselect:focus {
+  border-color: var(--accent);
+}
+
+.anchor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  flex: 1;
+}
+
+.anchor-btn {
+  background: var(--bg-darkest);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px;
+  font-size: 9px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.anchor-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.size-flags {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+
+.flag-btn {
+  flex: 1;
+  background: var(--bg-darkest);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.flag-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.flag-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}

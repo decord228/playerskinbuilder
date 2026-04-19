@@ -1,0 +1,200 @@
+.outliner {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 0;
+}
+
+.outliner::-webkit-scrollbar {
+  width: 6px;
+}
+
+.outliner::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.ti {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  border-radius: 4px;
+  margin: 2px 4px;
+  padding: 4px 8px 4px 0;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: background 0.15s;
+  background: transparent;
+}
+
+.ti:hover {
+  background: var(--bg-hover);
+}
+
+.ti.sel {
+  background: var(--bg-selected);
+}
+
+.ti.sel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+}
+
+.tt {
+  width: 16px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon);
+  transition: transform 0.15s;
+  cursor: pointer;
+}
+
+.tt svg {
+  width: 12px;
+  height: 12px;
+}
+
+.tt.open {
+  transform: rotate(90deg);
+}
+
+.tt.leaf {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ticon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon);
+}
+
+.ticon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tlabel {
+  flex: 1;
+  font-size: 11.5px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tlabel.editing {
+  background: var(--bg-darkest);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0 4px;
+  outline: none;
+  color: var(--text);
+}
+
+.tvis {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+
+.tvis svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tvis:hover {
+  background: var(--bg-hover);
+}
+
+.tvis.off {
+  opacity: 0.4;
+}
+
+.tlock {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s;
+  opacity: 0.4;
+  margin-left: auto;
+  margin-right: 4px;
+}
+
+.tlock svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tlock:hover {
+  background: var(--bg-hover);
+  opacity: 1;
+}
+
+.ti[draggable="true"] {
+  cursor: grab;
+}
+
+.ti[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.ti.dragging {
+  opacity: 0.4;
+}
+
+.ti.drag-before::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -2px;
+  height: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  z-index: 10;
+}
+
+.ti.drag-after::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  z-index: 10;
+}
+
+.ti.drag-into {
+  background: rgba(160, 160, 160, 0.2);
+  outline: 2px dashed var(--accent);
+  outline-offset: -2px;
+}
