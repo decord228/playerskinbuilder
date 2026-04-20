@@ -8,6 +8,9 @@ import { assetManager } from '../store/assetStore';
 import IconPicker from './IconPicker';
 import SVGPicker from './SVGPicker';
 import SVGEditor from './SVGEditor';
+import StyleTab from './StyleTab';
+import type { NodeStyle } from '../types/styles';
+import { DEFAULT_STYLE } from '../types/styles';
 import './PropertiesPanel.css';
 
 export default function PropertiesPanel() {
@@ -485,6 +488,17 @@ export default function PropertiesPanel() {
                 style={{ width: '60px' }}
               />
             </div>
+          </div>
+        );
+
+      case 'style_tab':
+        const style: NodeStyle = selectedNode.props.style || DEFAULT_STYLE;
+        return (
+          <div key="style_tab" style={{ width: '100%' }}>
+            <StyleTab
+              value={style}
+              onChange={(newStyle) => handlePropChange('style', newStyle)}
+            />
           </div>
         );
 

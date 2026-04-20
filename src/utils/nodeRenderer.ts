@@ -1,6 +1,8 @@
 import { getUIIcon } from '../data/icons';
 import type { TreeNode } from '../types';
 import { interpolate } from 'flubber';
+import type { NodeStyle } from '../types/styles';
+import { gradientToCss, shadowToCss, borderRadiusToCss } from '../types/styles';
 
 function hexToRgba(hex: string, alpha: number): string {
   // Remove # if present
@@ -1077,6 +1079,85 @@ export function applyNodeStyles(element: HTMLElement, node: TreeNode, tree: Tree
   // Modulate (tint)
   if (props.modulate && props.modulate !== '#ffffff') {
     element.style.opacity = '0.8';
+  }
+
+  // Apply style system (fill, stroke, border radius, effects)
+  const style: NodeStyle | undefined = props.style;
+  if (style && (node.type === 'Button' || node.type === 'PanelContainer')) {
+    // Apply Border Radius FIRST (so stroke follows the shape)
+    if (style.borderRadius) {
+      element.style.borderRadius = borderRadiusToCss(style.borderRadius);
+    }
+
+    // Apply Fill and Stroke together
+    const hasGradientStroke = style.stroke?.enabled && style.stroke.type === 'gradient' && style.stroke.gradient;
+
+    if (hasGradientStroke) {
+      // Gradient stroke using pseudo-element approach
+      const strokeWidth = style.stroke.width || 1;
+      const strokeGradient = gradientToCss(style.stroke.gradient);
+      const borderRadiusValue = element.style.borderRadius || '0px';
+
+      // Apply fill normally
+      if (style.fill?.enabled) {
+        if (style.fill.type === 'solid') {
+          const alpha = style.fill.opacity ?? 1;
+          const color = style.fill.color || '#ffffff';
+          element.style.background = `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+        } else if (style.fill.type === 'gradient' && style.fill.gradient) {
+          element.style.background = gradientToCss(style.fill.gradient);
+        }
+      }
+
+      // Create gradient border using box-shadow hack or add a class for CSS pseudo-element
+      // For now, use a unique attribute to apply CSS
+      element.setAttribute('data-gradient-stroke', 'true');
+      element.style.setProperty('--stroke-width', `${strokeWidth}px`);
+      element.style.setProperty('--stroke-gradient', strokeGradient);
+      element.style.setProperty('--border-radius', borderRadiusValue);
+
+      // Add relative positioning if not already positioned
+      if (!element.style.position || element.style.position === 'static') {
+        element.style.position = 'relative';
+      }
+
+      // No border needed, pseudo-element will handle it
+      element.style.border = 'none';
+      element.style.padding = `${strokeWidth}px`;
+    } else {
+      // Normal case - apply fill and stroke separately
+      if (style.fill?.enabled) {
+        if (style.fill.type === 'solid') {
+          const alpha = style.fill.opacity ?? 1;
+          const color = style.fill.color || '#ffffff';
+          element.style.background = `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+        } else if (style.fill.type === 'gradient' && style.fill.gradient) {
+          element.style.background = gradientToCss(style.fill.gradient);
+        }
+      }
+
+      if (style.stroke?.enabled && style.stroke.type === 'solid') {
+        const strokeWidth = style.stroke.width || 1;
+        const alpha = style.stroke.opacity ?? 1;
+        const color = style.stroke.color || '#000000';
+        element.style.border = `${strokeWidth}px solid ${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+      }
+    }
+
+    // Apply Effects
+    if (style.effects) {
+      // Background Blur
+      if (style.effects.backgroundBlur > 0) {
+        element.style.backdropFilter = `blur(${style.effects.backgroundBlur}px)`;
+        element.style.webkitBackdropFilter = `blur(${style.effects.backgroundBlur}px)`;
+      }
+
+      // Shadows
+      if (style.effects.shadows.length > 0) {
+        const shadowStrings = style.effects.shadows.map(shadow => shadowToCss(shadow));
+        element.style.boxShadow = shadowStrings.join(', ');
+      }
+    }
   }
 }
 

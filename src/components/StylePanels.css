@@ -1,0 +1,791 @@
+/* ============================================
+   FIGMA-STYLE DESIGN SYSTEM
+   ============================================ */
+
+/* Main Container */
+.style-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+/* ============================================
+   SECTION HEADER (Always Visible)
+   ============================================ */
+.sp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: none;
+  border-radius: 0;
+  cursor: default;
+  user-select: none;
+  min-height: 32px;
+}
+
+.sp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.sp-header-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sp-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================
+   CONTENT AREA (Darker background)
+   ============================================ */
+.sp-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 0;
+}
+
+/* ============================================
+   TOGGLE SWITCH (Figma style)
+   ============================================ */
+.sp-toggle {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 16px;
+}
+
+.sp-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.sp-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: 0.2s;
+  border-radius: 8px;
+}
+
+.sp-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.2s;
+  border-radius: 6px;
+}
+
+.sp-toggle input:checked + .sp-toggle-slider {
+  background-color: var(--accent);
+}
+
+.sp-toggle input:checked + .sp-toggle-slider:before {
+  transform: translateX(12px);
+}
+
+/* ============================================
+   TYPE SELECTOR (Figma tabs style)
+   ============================================ */
+.sp-type-selector {
+  display: flex;
+  gap: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+}
+
+.sp-type-selector button {
+  flex: 1;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sp-type-selector button:hover {
+  color: var(--text-primary);
+}
+
+.sp-type-selector button.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+  background: transparent;
+}
+
+/* ============================================
+   ROW LAYOUT (Label + Control)
+   ============================================ */
+.sp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
+}
+
+.sp-row-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.sp-row-control {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================
+   COLOR PREVIEW & INPUT (Figma style)
+   ============================================ */
+.sp-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sp-color-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.sp-color-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(45deg, #ccc 25%, transparent 25%),
+    linear-gradient(-45deg, #ccc 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ccc 75%),
+    linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.sp-color-preview-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.sp-color-preview:hover {
+  border-color: var(--accent);
+}
+
+.sp-color-preview.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.sp-color-input {
+  flex: 1;
+  padding: 6px 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.sp-color-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ============================================
+   FLOATING COLOR PICKER (Figma style)
+   ============================================ */
+.sp-color-picker-popover {
+  position: fixed;
+  z-index: 10000;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sp-color-picker-popover .react-colorful {
+  width: 200px;
+  height: 150px;
+}
+
+.sp-color-picker-popover .react-colorful__saturation {
+  border-radius: 4px 4px 0 0;
+  border-bottom: none;
+}
+
+.sp-color-picker-popover .react-colorful__hue,
+.sp-color-picker-popover .react-colorful__alpha {
+  height: 10px;
+  border-radius: 5px;
+  margin-top: 8px;
+}
+
+.sp-color-picker-popover .react-colorful__pointer {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sp-color-hex-input {
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: monospace;
+  text-align: center;
+  font-weight: 600;
+}
+
+.sp-color-hex-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ============================================
+   SLIDERS (Figma style - simple)
+   ============================================ */
+.sp-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sp-slider-row label {
+  min-width: 50px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.sp-slider-row input[type="range"] {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.sp-slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.sp-slider-row input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.sp-slider-row span {
+  min-width: 40px;
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-primary);
+  font-family: monospace;
+  font-weight: 500;
+}
+
+/* ============================================
+   GRADIENT PICKER (Figma style)
+   ============================================ */
+.sp-gradient-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sp-gradient-preview {
+  width: 100%;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sp-gradient-preview:hover {
+  border-color: var(--accent);
+}
+
+.sp-gradient-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sp-gradient-type-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sp-gradient-type-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+}
+
+.sp-gradient-type-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.sp-gradient-angle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.sp-gradient-angle input {
+  width: 40px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: 600;
+  text-align: right;
+}
+
+.sp-gradient-angle input:focus {
+  outline: none;
+}
+
+.sp-gradient-angle span {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Gradient Track */
+.sp-gradient-track-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sp-gradient-track {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: crosshair;
+  overflow: visible;
+}
+
+.sp-gradient-track-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+  opacity: 0.5;
+  font-weight: 400;
+}
+
+.sp-gradient-stop {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+  transition: all 0.15s ease;
+  z-index: 10;
+}
+
+.sp-gradient-stop:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.sp-gradient-stop:active {
+  cursor: grabbing;
+}
+
+.sp-gradient-stop.selected {
+  width: 18px;
+  height: 18px;
+  border-width: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.sp-gradient-stop-delete {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 14px;
+  height: 14px;
+  background: #ff3b30;
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.sp-gradient-stop:hover .sp-gradient-stop-delete {
+  display: flex;
+}
+
+/* ============================================
+   EFFECTS SECTION
+   ============================================ */
+.sp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sp-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding-bottom: 4px;
+}
+
+.sp-add-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.sp-add-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sp-add-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.sp-add-btn::before {
+  content: '+';
+  margin-right: 2px;
+}
+
+/* Empty State */
+.sp-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+/* ============================================
+   SHADOW ITEMS
+   ============================================ */
+.sp-shadow-item {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sp-shadow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.sp-shadow-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sp-shadow-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sp-shadow-type-badge {
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sp-shadow-preview {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: white;
+}
+
+.sp-shadow-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.sp-delete-btn {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-delete-btn:hover {
+  background: rgba(255, 59, 48, 0.15);
+  color: #ff3b30;
+}
+
+.sp-shadow-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   BORDER RADIUS CORNERS
+   ============================================ */
+.sp-corners-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.sp-corner-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sp-corner-control label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.sp-corner-control input {
+  padding: 6px 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.sp-corner-control input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Border Radius Preview */
+.sp-radius-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.sp-radius-preview-box {
+  width: 80px;
+  height: 80px;
+  background: var(--accent);
+  opacity: 0.6;
+  transition: border-radius 0.2s ease;
+}
+
+/* ============================================
+   LINK BUTTON
+   ============================================ */
+.sp-link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sp-link-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+}
+
+.sp-link-btn.linked {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+/* ============================================
+   STYLE TAB CONTAINER
+   ============================================ */
+.style-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+/* Custom Scrollbar */
+.style-tab::-webkit-scrollbar {
+  width: 6px;
+}
+
+.style-tab::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.style-tab::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.style-tab::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

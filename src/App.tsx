@@ -178,6 +178,60 @@ function App() {
     };
   }, [mode]);
 
+  useEffect(() => {
+    const resizeRight = document.getElementById('resizeRight');
+    if (!resizeRight) return;
+
+    // Load saved right panel width
+    const savedRightWidth = localStorage.getItem('ui-right-panel-width');
+    if (savedRightWidth) {
+      const rightPanel = resizeRight.nextElementSibling as HTMLElement;
+      if (rightPanel) {
+        rightPanel.style.width = `${savedRightWidth}px`;
+      }
+    }
+
+    let isResizing = false;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isResizing = true;
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+
+      const rightPanel = resizeRight.nextElementSibling as HTMLElement;
+      const newWidth = window.innerWidth - e.clientX;
+      const minWidth = 250;
+      const maxWidth = 600;
+
+      const clampedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+      rightPanel.style.width = `${clampedWidth}px`;
+    };
+
+    const handleMouseUp = () => {
+      if (isResizing) {
+        const rightPanel = resizeRight.nextElementSibling as HTMLElement;
+        const width = rightPanel.getBoundingClientRect().width;
+        localStorage.setItem('ui-right-panel-width', width.toString());
+      }
+      isResizing = false;
+      document.body.style.cursor = '';
+    };
+
+    resizeRight.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      resizeRight.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [mode]);
+
   const handleAddNode = () => {
     setShowAddDialog(true);
   };
@@ -185,6 +239,7 @@ function App() {
   // Get saved flex value for ph-top
   const savedPhTopFlex = typeof window !== 'undefined' ? localStorage.getItem('ui-horizontal-split-flex') : null;
   const savedPhBottomFlex = typeof window !== 'undefined' ? localStorage.getItem('ui-ph-bottom-flex') : null;
+  const savedRightPanelWidth = typeof window !== 'undefined' ? localStorage.getItem('ui-right-panel-width') : null;
 
   return (
     <div className="app">
@@ -220,7 +275,7 @@ function App() {
           <>
             <div className="resv" id="resizeRight"></div>
 
-            <div className="panel-right">
+            <div className="panel-right" style={savedRightPanelWidth ? { width: `${savedRightPanelWidth}px` } : {}}>
               <PropertiesPanel />
             </div>
           </>
