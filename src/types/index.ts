@@ -8,7 +8,6 @@ export type NodeType =
   | 'PanelContainer'
   | 'ColorRect'
   | 'Button'
-  | 'SVGButton'
   | 'Label'
   | 'HSlider'
   | 'VolumeButton'

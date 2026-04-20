@@ -3,7 +3,8 @@
    ============================================ */
 
 /* Main Container */
-.style-panel {
+.style-panel,
+.sp-panel {
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -12,6 +13,101 @@
   border: none;
   padding: 0;
   margin-bottom: 8px;
+  position: relative;
+}
+
+/* ============================================
+   STATE SELECTOR
+   ============================================ */
+.sp-state-selector {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  background: var(--bg-darkest);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.sp-state-selector button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.sp-state-selector button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.sp-state-selector button.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.sp-clear-state {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.sp-clear-state:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* ============================================
+   STATE SECTIONS (for InteractiveStatesPanel)
+   ============================================ */
+.state-section {
+  margin-bottom: 12px;
+}
+
+.state-section:last-child {
+  margin-bottom: 0;
+}
+
+.state-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.state-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.state-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 8px;
+  border-left: 2px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ============================================
@@ -158,6 +254,31 @@
   min-height: 28px;
 }
 
+.sp-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 500;
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.sp-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sp-value {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  min-width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
 .sp-row-label {
   font-size: 11px;
   color: var(--text-secondary);
@@ -170,6 +291,41 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* ============================================
+   SEGMENTED CONTROL
+   ============================================ */
+.sp-segmented {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  background: var(--bg-darkest);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.sp-segmented button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sp-segmented button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.sp-segmented button.active {
+  background: var(--accent);
+  color: #ffffff;
 }
 
 /* ============================================
@@ -245,6 +401,40 @@
 /* ============================================
    FLOATING COLOR PICKER (Figma style)
    ============================================ */
+.floating-color-picker {
+  position: fixed;
+  z-index: 10000;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.15s ease;
+}
+
+.floating-color-picker .react-colorful {
+  width: 200px;
+  height: 150px;
+}
+
+.floating-color-picker .react-colorful__saturation {
+  border-radius: 4px 4px 0 0;
+  border-bottom: none;
+}
+
+.floating-color-picker .react-colorful__hue {
+  height: 10px;
+  border-radius: 5px;
+  margin-top: 8px;
+}
+
+.floating-color-picker .react-colorful__pointer {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .sp-color-picker-popover {
   position: fixed;
   z-index: 10000;
@@ -768,8 +958,7 @@
   flex-direction: column;
   gap: 0;
   padding: 0;
-  overflow-y: auto;
-  max-height: calc(100vh - 200px);
+  overflow: visible;
 }
 
 /* Custom Scrollbar */
@@ -788,4 +977,84 @@
 
 .style-tab::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   SHADOW ITEMS
+   ============================================ */
+.shadow-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.shadow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.shadow-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.shadow-type {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.shadow-remove {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+
+.shadow-remove:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.shadow-controls {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* ============================================
+   ADD BUTTON
+   ============================================ */
+.sp-add-btn {
+  background: var(--bg-darkest);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.sp-add-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+  color: var(--text);
 }

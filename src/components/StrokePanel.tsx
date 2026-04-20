@@ -1,17 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import GradientPicker from './GradientPicker';
-import type { StrokeStyle, GradientData } from '../types/styles';
+import type { StatefulStroke, StrokeStyle, GradientData } from '../types/styles';
 import './StylePanels.css';
 
 interface StrokePanelProps {
-  value: StrokeStyle;
-  onChange: (stroke: StrokeStyle) => void;
+  value: StatefulStroke;
+  onChange: (stroke: StatefulStroke) => void;
 }
 
+type StateType = 'normal' | 'hover' | 'active' | 'disabled';
+
 export default function StrokePanel({ value, onChange }: StrokePanelProps) {
+  const [activeState, setActiveState] = useState<StateType>('normal');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [pickerPosition, setPickerPosition] = useState({ top: 0, left: 0 });
+  const [isOpen, setIsOpen] = useState(true);
   const colorPreviewRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -33,23 +37,31 @@ export default function StrokePanel({ value, onChange }: StrokePanelProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showColorPicker]);
 
+  // Get current state stroke or fallback to normal
+  const currentStroke: StrokeStyle = value[activeState] || value.normal;
+
   const handleToggle = (enabled: boolean) => {
-    onChange({ ...value, enabled });
+    onChange({
+      ...value,
+      [activeState]: { ...currentStroke, enabled }
+    });
   };
 
   const handleTypeChange = (type: 'solid' | 'gradient') => {
+    let newStroke: StrokeStyle;
+
     if (type === 'solid') {
-      onChange({
-        ...value,
+      newStroke = {
+        ...currentStroke,
         type: 'solid',
-        color: value.color || '#000000',
-        opacity: value.opacity || 1
-      });
+        color: currentStroke.color || '#000000',
+        opacity: currentStroke.opacity || 1
+      };
     } else {
-      onChange({
-        ...value,
+      newStroke = {
+        ...currentStroke,
         type: 'gradient',
-        gradient: value.gradient || {
+        gradient: currentStroke.gradient || {
           type: 'linear',
           angle: 90,
           stops: [
@@ -57,25 +69,42 @@ export default function StrokePanel({ value, onChange }: StrokePanelProps) {
             { color: '#000000', position: 100 }
           ]
         },
-        opacity: value.opacity || 1
-      });
+        opacity: currentStroke.opacity || 1
+      };
     }
+
+    onChange({
+      ...value,
+      [activeState]: newStroke
+    });
   };
 
   const handleColorChange = (color: string) => {
-    onChange({ ...value, color });
+    onChange({
+      ...value,
+      [activeState]: { ...currentStroke, color }
+    });
   };
 
   const handleGradientChange = (gradient: GradientData) => {
-    onChange({ ...value, gradient });
+    onChange({
+      ...value,
+      [activeState]: { ...currentStroke, gradient }
+    });
   };
 
   const handleWidthChange = (width: number) => {
-    onChange({ ...value, width });
+    onChange({
+      ...value,
+      [activeState]: { ...currentStroke, width }
+    });
   };
 
   const handleOpacityChange = (opacity: number) => {
-    onChange({ ...value, opacity });
+    onChange({
+      ...value,
+      [activeState]: { ...currentStroke, opacity }
+    });
   };
 
   const handleColorPreviewClick = () => {
@@ -89,139 +118,163 @@ export default function StrokePanel({ value, onChange }: StrokePanelProps) {
     }
   };
 
+  const handleStateChange = (state: StateType) => {
+    setActiveState(state);
+  };
+
+  const handleClearState = () => {
+    if (activeState === 'normal') return;
+
+    const newValue = { ...value };
+    delete newValue[activeState];
+    onChange(newValue);
+    setActiveState('normal');
+  };
+
   return (
     <div className="style-panel">
-      <div className="sp-header">
+      <div className="sp-header" onClick={() => setIsOpen(!isOpen)} style={{ cursor: 'pointer' }}>
         <div className="sp-header-left">
           <span className="sp-header-title">Stroke</span>
         </div>
         <div className="sp-header-right">
-          <label className="sp-toggle">
+          <label className="sp-toggle" onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
-              checked={value.enabled}
+              checked={currentStroke.enabled}
               onChange={(e) => handleToggle(e.target.checked)}
             />
             <span className="sp-toggle-slider"></span>
           </label>
+          <span style={{ fontSize: '10px', color: 'var(--text-dim)', marginLeft: '8px' }}>{isOpen ? '▼' : '▶'}</span>
         </div>
       </div>
 
-      {value.enabled && (
+      {isOpen && currentStroke.enabled && (
         <div className="sp-content">
-          {/* Type selector */}
-          <div className="sp-type-selector">
-            <button
-              className={value.type === 'solid' ? 'active' : ''}
-              onClick={() => handleTypeChange('solid')}
-            >
-              Solid
-            </button>
-            <button
-              className={value.type === 'gradient' ? 'active' : ''}
-              onClick={() => handleTypeChange('gradient')}
-            >
-              Gradient
-            </button>
+          {/* State Selector */}
+          <div className="sp-row">
+            <div className="sp-state-selector">
+              <button
+                className={activeState === 'normal' ? 'active' : ''}
+                onClick={() => handleStateChange('normal')}
+              >
+                Normal
+              </button>
+              <button
+                className={activeState === 'hover' ? 'active' : ''}
+                onClick={() => handleStateChange('hover')}
+              >
+                Hover
+              </button>
+              <button
+                className={activeState === 'active' ? 'active' : ''}
+                onClick={() => handleStateChange('active')}
+              >
+                Active
+              </button>
+              <button
+                className={activeState === 'disabled' ? 'active' : ''}
+                onClick={() => handleStateChange('disabled')}
+              >
+                Disabled
+              </button>
+            </div>
+            {activeState !== 'normal' && value[activeState] && (
+              <button className="sp-clear-state" onClick={handleClearState} title="Clear state">
+                ×
+              </button>
+            )}
           </div>
 
-          {/* Width slider */}
-          <div className="sp-slider-row">
-            <label>Width</label>
+          {/* Type */}
+          <div className="sp-row">
+            <span className="sp-label">Type</span>
+            <div className="sp-segmented">
+              <button
+                className={currentStroke.type === 'solid' ? 'active' : ''}
+                onClick={() => handleTypeChange('solid')}
+              >
+                Solid
+              </button>
+              <button
+                className={currentStroke.type === 'gradient' ? 'active' : ''}
+                onClick={() => handleTypeChange('gradient')}
+              >
+                Gradient
+              </button>
+            </div>
+          </div>
+
+          {/* Width */}
+          <div className="sp-row">
+            <span className="sp-label">Width</span>
             <input
               type="range"
               min="0"
               max="20"
               step="0.5"
-              value={value.width || 1}
+              value={currentStroke.width || 1}
               onChange={(e) => handleWidthChange(Number(e.target.value))}
+              style={{ flex: 1 }}
             />
-            <span>{value.width || 1}px</span>
+            <span className="sp-value">{currentStroke.width || 1}px</span>
           </div>
 
-          {/* Solid color */}
-          {value.type === 'solid' && (
-            <>
-              <div className="sp-color-row">
-                <div
-                  ref={colorPreviewRef}
-                  className={`sp-color-preview ${showColorPicker ? 'active' : ''}`}
-                  onClick={handleColorPreviewClick}
-                >
-                  <div
-                    className="sp-color-preview-inner"
-                    style={{ backgroundColor: value.color }}
-                  />
-                </div>
-                <input
-                  type="text"
-                  value={value.color || '#000000'}
-                  onChange={(e) => handleColorChange(e.target.value)}
-                  className="sp-color-input"
-                  placeholder="#000000"
-                />
-              </div>
-
-              <div className="sp-slider-row">
-                <label>Opacity</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={value.opacity || 1}
-                  onChange={(e) => handleOpacityChange(Number(e.target.value))}
-                />
-                <span>{Math.round((value.opacity || 1) * 100)}%</span>
-              </div>
-            </>
+          {/* Solid Color */}
+          {currentStroke.type === 'solid' && (
+            <div className="sp-row">
+              <span className="sp-label">Color</span>
+              <div
+                ref={colorPreviewRef}
+                className="sp-color-preview"
+                style={{ background: currentStroke.color || '#000000' }}
+                onClick={handleColorPreviewClick}
+              />
+            </div>
           )}
 
           {/* Gradient */}
-          {value.type === 'gradient' && value.gradient && (
-            <>
+          {currentStroke.type === 'gradient' && currentStroke.gradient && (
+            <div className="sp-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
               <GradientPicker
-                value={value.gradient}
+                value={currentStroke.gradient}
                 onChange={handleGradientChange}
               />
-
-              <div className="sp-slider-row">
-                <label>Opacity</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={value.opacity || 1}
-                  onChange={(e) => handleOpacityChange(Number(e.target.value))}
-                />
-                <span>{Math.round((value.opacity || 1) * 100)}%</span>
-              </div>
-            </>
+            </div>
           )}
+
+          {/* Opacity */}
+          <div className="sp-row">
+            <span className="sp-label">Opacity</span>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={currentStroke.opacity || 1}
+              onChange={(e) => handleOpacityChange(Number(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <span className="sp-value">{Math.round((currentStroke.opacity || 1) * 100)}%</span>
+          </div>
         </div>
       )}
 
-      {/* Floating Color Picker */}
-      {showColorPicker && value.type === 'solid' && (
+      {showColorPicker && (
         <div
           ref={pickerRef}
-          className="sp-color-picker-popover"
+          className="floating-color-picker"
           style={{
+            position: 'fixed',
             top: `${pickerPosition.top}px`,
-            left: `${pickerPosition.left}px`
+            left: `${pickerPosition.left}px`,
+            zIndex: 10000
           }}
         >
           <HexColorPicker
-            color={value.color || '#000000'}
+            color={currentStroke.color || '#000000'}
             onChange={handleColorChange}
-          />
-          <input
-            type="text"
-            value={value.color || '#000000'}
-            onChange={(e) => handleColorChange(e.target.value)}
-            className="sp-color-hex-input"
-            placeholder="#000000"
           />
         </div>
       )}

@@ -19,6 +19,14 @@ export interface FillStyle {
   opacity?: number; // 0-1
 }
 
+// Stateful fill (supports different states)
+export interface StatefulFill {
+  normal: FillStyle;
+  hover?: FillStyle;
+  active?: FillStyle;
+  disabled?: FillStyle;
+}
+
 // Stroke configuration
 export interface StrokeStyle {
   enabled: boolean;
@@ -27,6 +35,14 @@ export interface StrokeStyle {
   gradient?: GradientData; // For gradient stroke
   width: number; // px
   opacity?: number; // 0-1
+}
+
+// Stateful stroke (supports different states)
+export interface StatefulStroke {
+  normal: StrokeStyle;
+  hover?: StrokeStyle;
+  active?: StrokeStyle;
+  disabled?: StrokeStyle;
 }
 
 // Border radius configuration
@@ -57,12 +73,20 @@ export interface EffectsStyle {
   shadows: ShadowStyle[];
 }
 
+// Stateful effects (supports different states)
+export interface StatefulEffects {
+  normal: EffectsStyle;
+  hover?: EffectsStyle;
+  active?: EffectsStyle;
+  disabled?: EffectsStyle;
+}
+
 // Complete style configuration
 export interface NodeStyle {
-  fill: FillStyle;
-  stroke: StrokeStyle;
+  fill: StatefulFill;
+  stroke: StatefulStroke;
   borderRadius: BorderRadiusStyle;
-  effects: EffectsStyle;
+  effects: StatefulEffects;
 }
 
 // Default values
@@ -72,12 +96,20 @@ export const DEFAULT_FILL: FillStyle = {
   opacity: 1
 };
 
+export const DEFAULT_STATEFUL_FILL: StatefulFill = {
+  normal: DEFAULT_FILL
+};
+
 export const DEFAULT_STROKE: StrokeStyle = {
   enabled: false,
   type: 'solid',
   color: '#ffffff',
   width: 1,
   opacity: 1
+};
+
+export const DEFAULT_STATEFUL_STROKE: StatefulStroke = {
+  normal: DEFAULT_STROKE
 };
 
 export const DEFAULT_BORDER_RADIUS: BorderRadiusStyle = {
@@ -90,11 +122,15 @@ export const DEFAULT_EFFECTS: EffectsStyle = {
   shadows: []
 };
 
+export const DEFAULT_STATEFUL_EFFECTS: StatefulEffects = {
+  normal: DEFAULT_EFFECTS
+};
+
 export const DEFAULT_STYLE: NodeStyle = {
-  fill: DEFAULT_FILL,
-  stroke: DEFAULT_STROKE,
+  fill: DEFAULT_STATEFUL_FILL,
+  stroke: DEFAULT_STATEFUL_STROKE,
   borderRadius: DEFAULT_BORDER_RADIUS,
-  effects: DEFAULT_EFFECTS
+  effects: DEFAULT_STATEFUL_EFFECTS
 };
 
 // Helper functions

@@ -16,6 +16,27 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+function adjustBrightness(hex: string, factor: number, alpha: number): string {
+  // Remove # if present
+  hex = hex.replace('#', '');
+
+  // Parse hex values
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
+
+  // Adjust brightness
+  r = Math.min(255, Math.round(r * factor));
+  g = Math.min(255, Math.round(g * factor));
+  b = Math.min(255, Math.round(b * factor));
+
+  // Convert back to hex
+  const newHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+  // Return with alpha
+  return `${newHex}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+}
+
 export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement {
   const nodeType = node.type;
   let element;
@@ -182,7 +203,9 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
         element.style.position = 'relative';
         element.style.minWidth = '48px';
         element.style.minHeight = '48px';
-        element.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+        element.style.transition = 'opacity 0.2s ease';
+        element.style.backfaceVisibility = 'hidden';
+        element.style.webkitFontSmoothing = 'antialiased';
 
         // Disabled state
         if (props.disabled === 'true') {
@@ -192,20 +215,18 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
         } else {
           // Hover effect
           element.addEventListener('mouseenter', () => {
-            element.style.transform = 'scale(1.05)';
             element.style.opacity = '0.8';
           });
           element.addEventListener('mouseleave', () => {
-            element.style.transform = 'scale(1)';
             element.style.opacity = '1';
           });
 
           // Active effect
           element.addEventListener('mousedown', () => {
-            element.style.transform = 'scale(0.95)';
+            element.style.opacity = '0.6';
           });
           element.addEventListener('mouseup', () => {
-            element.style.transform = 'scale(1.05)';
+            element.style.opacity = '0.8';
           });
         }
 
@@ -213,10 +234,8 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
         const svgContent = props.svg_content || '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
         element.innerHTML = svgContent;
       } else {
-        // Legacy mode - styled button
+        // Legacy mode - styled button (colors and border-radius now managed by Style system)
         element.className = 'vpbtn';
-        element.style.background = props.bg_color || 'rgba(255,255,255,0.1)';
-        element.style.borderRadius = (props.border_radius || '100') + 'px';
         element.style.color = props.font_color || '#ffffff';
         element.style.fontSize = (props.font_size || '15') + 'px';
         element.style.fontFamily = props.font_family || 'Montserrat';
@@ -232,47 +251,6 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
         element.style.transition = 'all 0.2s ease';
         element.style.position = 'relative';
         element.style.overflow = 'hidden';
-
-        // Store original colors in dataset
-        element.dataset.bgColor = props.bg_color || 'rgba(255,255,255,0.1)';
-        element.dataset.fontColor = props.font_color || '#ffffff';
-        element.dataset.hoverBg = props.hover_bg_color || 'rgba(255,255,255,0.2)';
-        element.dataset.activeBg = props.active_bg_color || 'rgba(255,255,255,0.15)';
-        element.dataset.disabledBg = props.disabled_bg_color || 'rgba(255,255,255,0.05)';
-        element.dataset.disabledColor = props.disabled_font_color || 'rgba(255,255,255,0.3)';
-
-        // Hover effect
-        element.addEventListener('mouseenter', () => {
-          if (element.disabled) return;
-          element.style.background = element.dataset.hoverBg;
-          element.style.transform = 'scale(1.02)';
-        });
-        element.addEventListener('mouseleave', () => {
-          if (element.disabled) return;
-          element.style.background = element.dataset.bgColor;
-          element.style.transform = 'scale(1)';
-        });
-
-        // Active effect
-        element.addEventListener('mousedown', () => {
-          if (element.disabled) return;
-          element.style.background = element.dataset.activeBg;
-          element.style.transform = 'scale(0.98)';
-        });
-        element.addEventListener('mouseup', () => {
-          if (element.disabled) return;
-          element.style.background = element.dataset.hoverBg;
-          element.style.transform = 'scale(1.02)';
-        });
-
-        // Disabled state
-        if (props.disabled === 'true') {
-          element.disabled = true;
-          element.style.background = element.dataset.disabledBg;
-          element.style.color = element.dataset.disabledColor;
-          element.style.cursor = 'not-allowed';
-          element.style.opacity = '0.5';
-        }
 
         // Show icon if available
         if (props.icon) {
@@ -563,52 +541,6 @@ export function createNodeElement(node: TreeNode, tree: TreeNode[]): HTMLElement
           element.style.flex = '1';
         }
       }
-      break;
-
-    case 'SVGButton':
-      element = document.createElement('button');
-      element.className = 'vpbtn-svg';
-      element.style.background = 'transparent';
-      element.style.border = 'none';
-      element.style.cursor = 'pointer';
-      element.style.padding = '0';
-      element.style.display = 'flex';
-      element.style.alignItems = 'center';
-      element.style.justifyContent = 'center';
-      element.style.position = 'relative';
-      element.style.minWidth = '48px';
-      element.style.minHeight = '48px';
-      element.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
-
-      // Disabled state
-      if (props.disabled === 'true') {
-        element.disabled = true;
-        element.style.cursor = 'not-allowed';
-        element.style.opacity = '0.4';
-      } else {
-        // Hover effect
-        element.addEventListener('mouseenter', () => {
-          element.style.transform = 'scale(1.05)';
-          element.style.opacity = '0.8';
-        });
-        element.addEventListener('mouseleave', () => {
-          element.style.transform = 'scale(1)';
-          element.style.opacity = '1';
-        });
-
-        // Active effect
-        element.addEventListener('mousedown', () => {
-          element.style.transform = 'scale(0.95)';
-        });
-        element.addEventListener('mouseup', () => {
-          element.style.transform = 'scale(1.05)';
-        });
-      }
-
-      // Insert SVG content
-      const svgContent = props.svg_content || '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-      element.innerHTML = svgContent;
-
       break;
 
     case 'Label':
@@ -1002,10 +934,7 @@ export function applyNodeStyles(element: HTMLElement, node: TreeNode, tree: Tree
       const w = parseInt(match[1]);
       const h = parseInt(match[2]);
       if (w > 0) element.style.minWidth = w + 'px';
-      if (h > 0) {
-        element.style.minHeight = h + 'px';
-        element.style.maxHeight = h + 'px';
-      }
+      if (h > 0) element.style.minHeight = h + 'px';
     }
   } else {
     // Absolute positioning with anchors
@@ -1083,79 +1012,417 @@ export function applyNodeStyles(element: HTMLElement, node: TreeNode, tree: Tree
 
   // Apply style system (fill, stroke, border radius, effects)
   const style: NodeStyle | undefined = props.style;
-  if (style && (node.type === 'Button' || node.type === 'PanelContainer')) {
+  const buttonMode = node.type === 'Button' ? (props.button_mode || 'legacy') : null;
+
+  // Only apply styles if not in SVG button mode
+  if (style && (node.type === 'Button' || node.type === 'PanelContainer') && buttonMode !== 'svg') {
     // Apply Border Radius FIRST (so stroke follows the shape)
     if (style.borderRadius) {
       element.style.borderRadius = borderRadiusToCss(style.borderRadius);
     }
 
+    // Get normal state styles
+    const normalFill = style.fill.normal;
+    const normalStroke = style.stroke.normal;
+    const normalEffects = style.effects.normal;
+
+    // Helper to convert FillStyle to CSS background
+    const fillToCss = (fill: any): string => {
+      if (!fill || fill.type === 'none') return '';
+      if (fill.type === 'solid') {
+        const alpha = fill.opacity ?? 1;
+        const color = fill.color || '#ffffff';
+        return `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+      } else if (fill.type === 'gradient' && fill.gradient) {
+        return gradientToCss(fill.gradient);
+      }
+      return '';
+    };
+
     // Apply Fill and Stroke together
-    const hasGradientStroke = style.stroke?.enabled && style.stroke.type === 'gradient' && style.stroke.gradient;
+    const hasGradientStroke = normalStroke?.enabled && normalStroke.type === 'gradient' && normalStroke.gradient;
 
     if (hasGradientStroke) {
       // Gradient stroke using pseudo-element approach
-      const strokeWidth = style.stroke.width || 1;
-      const strokeGradient = gradientToCss(style.stroke.gradient);
+      const strokeWidth = normalStroke.width || 1;
+      const strokeGradient = gradientToCss(normalStroke.gradient);
       const borderRadiusValue = element.style.borderRadius || '0px';
 
       // Apply fill normally
-      if (style.fill?.enabled) {
-        if (style.fill.type === 'solid') {
-          const alpha = style.fill.opacity ?? 1;
-          const color = style.fill.color || '#ffffff';
-          element.style.background = `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
-        } else if (style.fill.type === 'gradient' && style.fill.gradient) {
-          element.style.background = gradientToCss(style.fill.gradient);
-        }
+      const fillCss = fillToCss(normalFill);
+      if (fillCss) {
+        element.style.background = fillCss;
       }
 
-      // Create gradient border using box-shadow hack or add a class for CSS pseudo-element
-      // For now, use a unique attribute to apply CSS
       element.setAttribute('data-gradient-stroke', 'true');
       element.style.setProperty('--stroke-width', `${strokeWidth}px`);
       element.style.setProperty('--stroke-gradient', strokeGradient);
       element.style.setProperty('--border-radius', borderRadiusValue);
 
-      // Add relative positioning if not already positioned
       if (!element.style.position || element.style.position === 'static') {
         element.style.position = 'relative';
       }
 
-      // No border needed, pseudo-element will handle it
       element.style.border = 'none';
       element.style.padding = `${strokeWidth}px`;
     } else {
       // Normal case - apply fill and stroke separately
-      if (style.fill?.enabled) {
-        if (style.fill.type === 'solid') {
-          const alpha = style.fill.opacity ?? 1;
-          const color = style.fill.color || '#ffffff';
-          element.style.background = `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
-        } else if (style.fill.type === 'gradient' && style.fill.gradient) {
-          element.style.background = gradientToCss(style.fill.gradient);
-        }
+      const fillCss = fillToCss(normalFill);
+      if (fillCss) {
+        element.style.background = fillCss;
       }
 
-      if (style.stroke?.enabled && style.stroke.type === 'solid') {
-        const strokeWidth = style.stroke.width || 1;
-        const alpha = style.stroke.opacity ?? 1;
-        const color = style.stroke.color || '#000000';
+      if (normalStroke?.enabled && normalStroke.type === 'solid') {
+        const strokeWidth = normalStroke.width || 1;
+        const alpha = normalStroke.opacity ?? 1;
+        const color = normalStroke.color || '#000000';
         element.style.border = `${strokeWidth}px solid ${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
       }
     }
 
     // Apply Effects
-    if (style.effects) {
+    if (normalEffects) {
       // Background Blur
-      if (style.effects.backgroundBlur > 0) {
-        element.style.backdropFilter = `blur(${style.effects.backgroundBlur}px)`;
-        element.style.webkitBackdropFilter = `blur(${style.effects.backgroundBlur}px)`;
+      if (normalEffects.backgroundBlur > 0) {
+        element.style.backdropFilter = `blur(${normalEffects.backgroundBlur}px)`;
+        element.style.webkitBackdropFilter = `blur(${normalEffects.backgroundBlur}px)`;
       }
 
       // Shadows
-      if (style.effects.shadows.length > 0) {
-        const shadowStrings = style.effects.shadows.map(shadow => shadowToCss(shadow));
+      if (normalEffects.shadows.length > 0) {
+        const shadowStrings = normalEffects.shadows.map(shadow => shadowToCss(shadow));
         element.style.boxShadow = shadowStrings.join(', ');
+      }
+    }
+
+    // Apply Interactive States (hover/active/disabled)
+    if (node.type === 'Button') {
+      const hoverFill = style.fill.hover;
+      const activeFill = style.fill.active;
+      const disabledFill = style.fill.disabled;
+
+      const hoverStroke = style.stroke.hover;
+      const activeStroke = style.stroke.active;
+      const disabledStroke = style.stroke.disabled;
+
+      const hoverEffects = style.effects.hover;
+      const activeEffects = style.effects.active;
+      const disabledEffects = style.effects.disabled;
+
+      // Get animation settings
+      const hoverAnimation = props.hover_animation || 'none';
+      const activeAnimation = props.active_animation || 'none';
+      const animDuration = parseFloat(props.animation_duration || '200');
+      const hoverScale = parseFloat(props.hover_scale || '1.05');
+      const activeScale = parseFloat(props.active_scale || '0.95');
+      const liftDistance = parseFloat(props.lift_distance || '2');
+
+      // Store base state
+      const baseBg = element.style.background;
+      const baseBorder = normalStroke?.enabled ? element.style.border : 'none';
+      const baseBoxShadow = element.style.boxShadow;
+      const baseBackdropFilter = element.style.backdropFilter;
+
+      // Check if we need gradient transitions
+      const hasGradientTransition =
+        (normalFill?.type === 'gradient') ||
+        (hoverFill?.type === 'gradient') ||
+        (activeFill?.type === 'gradient');
+
+      if (hasGradientTransition) {
+        // Use pseudo-elements for smooth gradient transitions
+        if (!element.style.position || element.style.position === 'static') {
+          element.style.position = 'relative';
+        }
+        element.style.isolation = 'isolate';
+        element.style.willChange = 'opacity';
+        element.style.backfaceVisibility = 'hidden';
+        element.style.webkitFontSmoothing = 'antialiased';
+
+        // Create hover layer
+        if (hoverFill) {
+          const hoverLayer = document.createElement('div');
+          hoverLayer.className = 'gradient-hover-layer';
+          const hoverBg = fillToCss(hoverFill);
+          hoverLayer.style.cssText = `
+            position: absolute;
+            inset: 0;
+            background: ${hoverBg};
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            border-radius: inherit;
+            z-index: 0;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+          `;
+          element.insertBefore(hoverLayer, element.firstChild);
+
+          element.addEventListener('mouseenter', () => {
+            if (element.disabled) return;
+            hoverLayer.style.opacity = '1';
+
+            // Apply hover animation
+            if (hoverAnimation === 'scale') {
+              element.style.transform = `scale(${hoverScale})`;
+            } else if (hoverAnimation === 'lift') {
+              element.style.transform = `translateY(-${liftDistance}px)`;
+            } else if (hoverAnimation === 'glow') {
+              element.style.filter = 'brightness(1.2)';
+            }
+          });
+
+          element.addEventListener('mouseleave', () => {
+            if (element.disabled) return;
+            hoverLayer.style.opacity = '0';
+
+            // Reset animation
+            element.style.transform = '';
+            element.style.filter = '';
+          });
+        }
+
+        // Create active layer
+        if (activeFill) {
+          const activeLayer = document.createElement('div');
+          activeLayer.className = 'gradient-active-layer';
+          const activeBg = fillToCss(activeFill);
+          activeLayer.style.cssText = `
+            position: absolute;
+            inset: 0;
+            background: ${activeBg};
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            pointer-events: none;
+            border-radius: inherit;
+            z-index: 0;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+          `;
+          element.insertBefore(activeLayer, element.firstChild);
+
+          element.addEventListener('mousedown', () => {
+            if (element.disabled) return;
+            activeLayer.style.opacity = '1';
+            const hoverLayer = element.querySelector('.gradient-hover-layer') as HTMLElement;
+            if (hoverLayer) hoverLayer.style.opacity = '0';
+
+            // Apply active animation
+            if (activeAnimation === 'scale') {
+              element.style.transform = `scale(${activeScale})`;
+            } else if (activeAnimation === 'press') {
+              element.style.transform = `translateY(2px)`;
+            }
+          });
+
+          element.addEventListener('mouseup', () => {
+            if (element.disabled) return;
+            activeLayer.style.opacity = '0';
+            if (hoverFill) {
+              const hoverLayer = element.querySelector('.gradient-hover-layer') as HTMLElement;
+              if (hoverLayer) hoverLayer.style.opacity = '1';
+            }
+
+            // Return to hover animation
+            if (hoverAnimation === 'scale') {
+              element.style.transform = `scale(${hoverScale})`;
+            } else if (hoverAnimation === 'lift') {
+              element.style.transform = `translateY(-${liftDistance}px)`;
+            } else {
+              element.style.transform = '';
+            }
+          });
+
+          element.addEventListener('mouseleave', () => {
+            if (element.disabled) return;
+            activeLayer.style.opacity = '0';
+          });
+        }
+
+        // Ensure button content is above gradient layers
+        const children = Array.from(element.children);
+        children.forEach(child => {
+          if (!child.classList.contains('gradient-hover-layer') && !child.classList.contains('gradient-active-layer')) {
+            (child as HTMLElement).style.position = 'relative';
+            (child as HTMLElement).style.zIndex = '1';
+          }
+        });
+
+        // Add transition for other properties
+        const transitionProps = ['border', 'box-shadow'];
+        if (hoverAnimation !== 'none' || activeAnimation !== 'none') {
+          transitionProps.push('transform');
+        }
+        if (hoverAnimation === 'glow') {
+          transitionProps.push('filter');
+        }
+        element.style.transition = transitionProps.map(p => `${p} ${animDuration}ms ease`).join(', ');
+      } else {
+        // Solid colors - use normal transitions
+        const transitionProps = ['background', 'border', 'box-shadow'];
+        if (hoverAnimation !== 'none' || activeAnimation !== 'none') {
+          transitionProps.push('transform');
+        }
+        if (hoverAnimation === 'glow') {
+          transitionProps.push('filter');
+        }
+        element.style.transition = transitionProps.map(p => `${p} ${animDuration}ms ease`).join(', ');
+        element.style.backfaceVisibility = 'hidden';
+        element.style.webkitFontSmoothing = 'antialiased';
+      }
+
+      // Hover effect (for solid colors)
+      if (!hasGradientTransition || hoverFill?.type === 'solid') {
+        element.addEventListener('mouseenter', () => {
+          if (element.disabled) return;
+
+          if (hoverFill && hoverFill.type === 'solid') {
+            const hoverBg = fillToCss(hoverFill);
+            if (hoverBg) element.style.background = hoverBg;
+          }
+
+          if (hoverStroke?.enabled) {
+            if (hoverStroke.type === 'solid') {
+              const strokeWidth = hoverStroke.width || 1;
+              const alpha = hoverStroke.opacity ?? 1;
+              const color = hoverStroke.color || '#000000';
+              element.style.border = `${strokeWidth}px solid ${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+            }
+          }
+
+          if (hoverEffects) {
+            if (hoverEffects.backgroundBlur > 0) {
+              element.style.backdropFilter = `blur(${hoverEffects.backgroundBlur}px)`;
+              element.style.webkitBackdropFilter = `blur(${hoverEffects.backgroundBlur}px)`;
+            }
+            if (hoverEffects.shadows.length > 0) {
+              const shadowStrings = hoverEffects.shadows.map(shadow => shadowToCss(shadow));
+              element.style.boxShadow = shadowStrings.join(', ');
+            }
+          }
+
+          // Apply hover animation
+          if (hoverAnimation === 'scale') {
+            element.style.transform = `scale(${hoverScale})`;
+          } else if (hoverAnimation === 'lift') {
+            element.style.transform = `translateY(-${liftDistance}px)`;
+          } else if (hoverAnimation === 'glow') {
+            element.style.filter = 'brightness(1.2)';
+          }
+        });
+
+        element.addEventListener('mouseleave', () => {
+          if (element.disabled) return;
+
+          element.style.background = baseBg;
+          element.style.border = baseBorder;
+          element.style.boxShadow = baseBoxShadow;
+          element.style.backdropFilter = baseBackdropFilter;
+          element.style.webkitBackdropFilter = baseBackdropFilter;
+
+          // Reset animation
+          element.style.transform = '';
+          element.style.filter = '';
+        });
+      }
+
+      // Active effect (for solid colors)
+      if (!hasGradientTransition || activeFill?.type === 'solid') {
+        element.addEventListener('mousedown', () => {
+          if (element.disabled) return;
+
+          if (activeFill && activeFill.type === 'solid') {
+            const activeBg = fillToCss(activeFill);
+            if (activeBg) element.style.background = activeBg;
+          }
+
+          if (activeStroke?.enabled) {
+            if (activeStroke.type === 'solid') {
+              const strokeWidth = activeStroke.width || 1;
+              const alpha = activeStroke.opacity ?? 1;
+              const color = activeStroke.color || '#000000';
+              element.style.border = `${strokeWidth}px solid ${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+            }
+          }
+
+          if (activeEffects) {
+            if (activeEffects.backgroundBlur > 0) {
+              element.style.backdropFilter = `blur(${activeEffects.backgroundBlur}px)`;
+              element.style.webkitBackdropFilter = `blur(${activeEffects.backgroundBlur}px)`;
+            }
+            if (activeEffects.shadows.length > 0) {
+              const shadowStrings = activeEffects.shadows.map(shadow => shadowToCss(shadow));
+              element.style.boxShadow = shadowStrings.join(', ');
+            }
+          }
+
+          // Apply active animation
+          if (activeAnimation === 'scale') {
+            element.style.transform = `scale(${activeScale})`;
+          } else if (activeAnimation === 'press') {
+            element.style.transform = `translateY(2px)`;
+          }
+        });
+
+        element.addEventListener('mouseup', () => {
+          if (element.disabled) return;
+
+          // Return to hover state
+          if (hoverFill && hoverFill.type === 'solid') {
+            const hoverBg = fillToCss(hoverFill);
+            if (hoverBg) element.style.background = hoverBg;
+          } else {
+            element.style.background = baseBg;
+          }
+
+          if (hoverStroke?.enabled) {
+            if (hoverStroke.type === 'solid') {
+              const strokeWidth = hoverStroke.width || 1;
+              const alpha = hoverStroke.opacity ?? 1;
+              const color = hoverStroke.color || '#000000';
+              element.style.border = `${strokeWidth}px solid ${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+            }
+          } else {
+            element.style.border = baseBorder;
+          }
+
+          // Return to hover animation
+          if (hoverAnimation === 'scale') {
+            element.style.transform = `scale(${hoverScale})`;
+          } else if (hoverAnimation === 'lift') {
+            element.style.transform = `translateY(-${liftDistance}px)`;
+          } else {
+            element.style.transform = '';
+          }
+        });
+      }
+
+      // Disabled state
+      if (props.disabled === 'true' && disabledFill) {
+        element.disabled = true;
+        const disabledBg = fillToCss(disabledFill);
+        if (disabledBg) element.style.background = disabledBg;
+
+        if (disabledStroke?.enabled && disabledStroke.type === 'solid') {
+          const strokeWidth = disabledStroke.width || 1;
+          const alpha = disabledStroke.opacity ?? 1;
+          const color = disabledStroke.color || '#000000';
+          element.style.border = `${strokeWidth}px solid ${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+        }
+
+        if (disabledEffects) {
+          if (disabledEffects.backgroundBlur > 0) {
+            element.style.backdropFilter = `blur(${disabledEffects.backgroundBlur}px)`;
+            element.style.webkitBackdropFilter = `blur(${disabledEffects.backgroundBlur}px)`;
+          }
+          if (disabledEffects.shadows.length > 0) {
+            const shadowStrings = disabledEffects.shadows.map(shadow => shadowToCss(shadow));
+            element.style.boxShadow = shadowStrings.join(', ');
+          }
+        }
+
+        element.style.cursor = 'not-allowed';
+        element.style.opacity = '0.5';
       }
     }
   }

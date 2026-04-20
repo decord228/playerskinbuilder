@@ -260,11 +260,19 @@
   background: var(--bg-darkest);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 6px;
-  font-size: 9px;
+  padding: 8px;
   color: var(--text-dim);
   cursor: pointer;
   transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.anchor-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .anchor-btn:hover {
@@ -273,9 +281,13 @@
   color: var(--text);
 }
 
+.anchor-btn-full {
+  grid-column: 1 / -1;
+}
+
 .size-flags {
   display: flex;
-  gap: 2px;
+  gap: 4px;
   flex: 1;
 }
 
@@ -284,17 +296,25 @@
   background: var(--bg-darkest);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 4px;
-  font-size: 10px;
-  font-weight: 600;
+  padding: 6px;
   color: var(--text-dim);
   cursor: pointer;
   transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.flag-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .flag-btn:hover {
   background: var(--bg-hover);
   color: var(--text);
+  border-color: var(--text-dim);
 }
 
 .flag-btn.active {

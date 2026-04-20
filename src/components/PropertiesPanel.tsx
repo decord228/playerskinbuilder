@@ -9,6 +9,7 @@ import IconPicker from './IconPicker';
 import SVGPicker from './SVGPicker';
 import SVGEditor from './SVGEditor';
 import StyleTab from './StyleTab';
+import CoordinateField from './CoordinateField';
 import type { NodeStyle } from '../types/styles';
 import { DEFAULT_STYLE } from '../types/styles';
 import './PropertiesPanel.css';
@@ -17,6 +18,7 @@ export default function PropertiesPanel() {
   const { selectedNodeId, tree, updateNode, updateNodeProps } = useStore();
   const selectedNode = tree.find(n => n.id === selectedNodeId);
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const handleAssetSelected = () => {
@@ -397,6 +399,89 @@ export default function PropertiesPanel() {
         );
 
       case 'anchor':
+        const getAnchorIcon = (name: string) => {
+          switch (name) {
+            case 'TL':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="3" y="3" width="4" height="4" rx="0.5" fill="currentColor"/>
+                </svg>
+              );
+            case 'Top':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="7" y="3" width="6" height="4" rx="0.5" fill="currentColor"/>
+                  <line x1="2" y1="3" x2="18" y2="3" strokeWidth="2"/>
+                </svg>
+              );
+            case 'TR':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="13" y="3" width="4" height="4" rx="0.5" fill="currentColor"/>
+                </svg>
+              );
+            case 'Left':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="3" y="7" width="4" height="6" rx="0.5" fill="currentColor"/>
+                  <line x1="3" y1="2" x2="3" y2="18" strokeWidth="2"/>
+                </svg>
+              );
+            case 'Center':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="7" y="7" width="6" height="6" rx="0.5" fill="currentColor"/>
+                  <circle cx="10" cy="10" r="1" fill="currentColor"/>
+                </svg>
+              );
+            case 'Right':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="13" y="7" width="4" height="6" rx="0.5" fill="currentColor"/>
+                  <line x1="17" y1="2" x2="17" y2="18" strokeWidth="2"/>
+                </svg>
+              );
+            case 'BL':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="3" y="13" width="4" height="4" rx="0.5" fill="currentColor"/>
+                </svg>
+              );
+            case 'Bottom':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="7" y="13" width="6" height="4" rx="0.5" fill="currentColor"/>
+                  <line x1="2" y1="17" x2="18" y2="17" strokeWidth="2"/>
+                </svg>
+              );
+            case 'BR':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="13" y="13" width="4" height="4" rx="0.5" fill="currentColor"/>
+                </svg>
+              );
+            case 'Full':
+              return (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="16" height="16" rx="1.5"/>
+                  <rect x="3.5" y="3.5" width="13" height="13" rx="0.5" fill="currentColor" opacity="0.3"/>
+                  <path d="M2 2l16 16M18 2L2 18" strokeWidth="1" opacity="0.3"/>
+                </svg>
+              );
+            default:
+              return null;
+          }
+        };
+
         return (
           <div className="pitem" key="anchor-preset">
             <label className="plabel">anchor preset</label>
@@ -415,7 +500,7 @@ export default function PropertiesPanel() {
               ].map(preset => (
                 <button
                   key={preset.name}
-                  className="anchor-btn"
+                  className={`anchor-btn ${preset.name === 'Full' ? 'anchor-btn-full' : ''}`}
                   onClick={() => {
                     updateNodeProps(selectedNode.id, {
                       anchor_left: String(preset.al),
@@ -424,15 +509,122 @@ export default function PropertiesPanel() {
                       anchor_bottom: String(preset.ab),
                     });
                   }}
+                  title={preset.name}
                 >
-                  {preset.name}
+                  {getAnchorIcon(preset.name)}
                 </button>
               ))}
             </div>
           </div>
         );
 
+      case 'rect_offset':
+        return (
+          <CoordinateField
+            key="rect_offset"
+            label="offset"
+            type="rect"
+            values={{
+              left: selectedNode.props.offset_left || '0',
+              top: selectedNode.props.offset_top || '0',
+              right: selectedNode.props.offset_right || '0',
+              bottom: selectedNode.props.offset_bottom || '0',
+            }}
+            keys={{
+              left: 'offset_left',
+              top: 'offset_top',
+              right: 'offset_right',
+              bottom: 'offset_bottom',
+            }}
+            onChange={handlePropChange}
+          />
+        );
+
+      case 'vector2_size':
+        const sizeMatch = (selectedNode.props.custom_minimum_size || '(0,0)').match(/\((\d+),(\d+)\)/);
+        const sizeX = sizeMatch ? sizeMatch[1] : '0';
+        const sizeY = sizeMatch ? sizeMatch[2] : '0';
+
+        return (
+          <CoordinateField
+            key="vector2_size"
+            label="minimum size"
+            type="vector2"
+            values={{
+              x: sizeX,
+              y: sizeY,
+            }}
+            keys={{
+              x: 'custom_minimum_size_x',
+              y: 'custom_minimum_size_y',
+            }}
+            onChange={(key, value) => {
+              if (key === 'custom_minimum_size_x') {
+                const newSize = `(${value},${sizeY})`;
+                handlePropChange('custom_minimum_size', newSize);
+              } else if (key === 'custom_minimum_size_y') {
+                const newSize = `(${sizeX},${value})`;
+                handlePropChange('custom_minimum_size', newSize);
+              }
+            }}
+          />
+        );
+
       case 'size_flags':
+        const getSizeFlagIcon = (flag: string) => {
+          switch (flag) {
+            case 'FILL':
+              return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                  <rect x="7" y="7" width="10" height="10" rx="1" fill="currentColor" opacity="0.3"/>
+                </svg>
+              );
+            case 'EXPAND':
+              return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                  <path d="M8 12h8M12 8v8" strokeWidth="2"/>
+                  <path d="M7 7l3 3M17 7l-3 3M7 17l3-3M17 17l-3-3"/>
+                </svg>
+              );
+            case 'EXPAND_FILL':
+              return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                  <rect x="7" y="7" width="10" height="10" rx="1" fill="currentColor" opacity="0.3"/>
+                  <path d="M8 12h8M12 8v8" strokeWidth="2"/>
+                </svg>
+              );
+            case 'SHRINK_BEGIN':
+              return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                  <rect x="6" y="6" width="6" height="6" rx="1" fill="currentColor"/>
+                  <path d="M9 9L6.5 6.5" strokeWidth="1" opacity="0.5"/>
+                </svg>
+              );
+            case 'SHRINK_CENTER':
+              return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                  <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/>
+                  <circle cx="12" cy="12" r="1" fill="currentColor" opacity="0.5"/>
+                </svg>
+              );
+            case 'SHRINK_END':
+              return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                  <rect x="12" y="12" width="6" height="6" rx="1" fill="currentColor"/>
+                  <path d="M15 15l2.5 2.5" strokeWidth="1" opacity="0.5"/>
+                </svg>
+              );
+            default:
+              return null;
+          }
+        };
+
         return (
           <div className="pitem" key={field.key}>
             <label className="plabel">{field.key.replace('size_flags_', '')}</label>
@@ -444,7 +636,7 @@ export default function PropertiesPanel() {
                   onClick={() => handlePropChange(field.key, opt)}
                   title={opt}
                 >
-                  {opt.substring(0, 1)}
+                  {getSizeFlagIcon(opt)}
                 </button>
               ))}
             </div>
@@ -498,6 +690,13 @@ export default function PropertiesPanel() {
             <StyleTab
               value={style}
               onChange={(newStyle) => handlePropChange('style', newStyle)}
+              nodeProps={selectedNode.props}
+              onPropsChange={(newProps) => {
+                Object.keys(newProps).forEach(key => {
+                  handlePropChange(key, newProps[key]);
+                });
+              }}
+              nodeType={selectedNode.type}
             />
           </div>
         );
@@ -524,22 +723,36 @@ export default function PropertiesPanel() {
         <span className="proptype">{selectedNode.type}</span>
       </div>
       <div className="propscroll">
-        {sections.map((section, idx) => (
-          <div key={idx} className="psec">
-            <div className="psec-hdr">
-              {section.icon && (
-                <div
-                  className="psec-icon"
-                  dangerouslySetInnerHTML={{ __html: section.icon }}
-                />
+        {sections.map((section, idx) => {
+          const sectionKey = `${section.name}-${idx}`;
+          const isOpen = openSections[sectionKey] !== false; // Default to open
+
+          return (
+            <div key={idx} className="psec">
+              <div
+                className="psec-hdr"
+                onClick={() => setOpenSections(prev => ({ ...prev, [sectionKey]: !isOpen }))}
+                style={{ cursor: 'pointer' }}
+              >
+                {section.icon && (
+                  <div
+                    className="psec-icon"
+                    dangerouslySetInnerHTML={{ __html: section.icon }}
+                  />
+                )}
+                <span className="psec-title">{section.name}</span>
+                <span style={{ marginLeft: 'auto', fontSize: '10px', color: 'var(--text-dim)' }}>
+                  {isOpen ? '▼' : '▶'}
+                </span>
+              </div>
+              {isOpen && (
+                <div className="psec-body">
+                  {section.fields.map(field => renderField(field))}
+                </div>
               )}
-              <span className="psec-title">{section.name}</span>
             </div>
-            <div className="psec-body">
-              {section.fields.map(field => renderField(field))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

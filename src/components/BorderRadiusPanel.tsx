@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { BorderRadiusStyle } from '../types/styles';
 import './StylePanels.css';
 
@@ -8,6 +8,7 @@ interface BorderRadiusPanelProps {
 }
 
 export default function BorderRadiusPanel({ value, onChange }: BorderRadiusPanelProps) {
+  const [isOpen, setIsOpen] = useState(true);
   const handleLinkedChange = (linked: boolean) => {
     if (linked) {
       const all = value.topLeft || value.topRight || value.bottomLeft || value.bottomRight || 0;
@@ -34,14 +35,14 @@ export default function BorderRadiusPanel({ value, onChange }: BorderRadiusPanel
 
   return (
     <div className="style-panel">
-      <div className="sp-header">
+      <div className="sp-header" onClick={() => setIsOpen(!isOpen)} style={{ cursor: 'pointer' }}>
         <div className="sp-header-left">
           <span className="sp-header-title">Border Radius</span>
         </div>
         <div className="sp-header-right">
           <button
             className={`sp-link-btn ${value.linked ? 'linked' : ''}`}
-            onClick={() => handleLinkedChange(!value.linked)}
+            onClick={(e) => { e.stopPropagation(); handleLinkedChange(!value.linked); }}
             title={value.linked ? 'Unlink corners' : 'Link corners'}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -60,9 +61,11 @@ export default function BorderRadiusPanel({ value, onChange }: BorderRadiusPanel
               )}
             </svg>
           </button>
+          <span style={{ fontSize: '10px', color: 'var(--text-dim)', marginLeft: '8px' }}>{isOpen ? '▼' : '▶'}</span>
         </div>
       </div>
 
+      {isOpen && (
       <div className="sp-content">
         {value.linked ? (
           <div className="sp-slider-row">
@@ -145,6 +148,7 @@ export default function BorderRadiusPanel({ value, onChange }: BorderRadiusPanel
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

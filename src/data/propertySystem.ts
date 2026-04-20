@@ -28,11 +28,8 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       name: 'Control — Rect',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>',
       fields: [
-        { key: 'offset_left', type: 'text', def: '0' },
-        { key: 'offset_top', type: 'text', def: '0' },
-        { key: 'offset_right', type: 'text', def: '0' },
-        { key: 'offset_bottom', type: 'text', def: '0' },
-        { key: 'custom_minimum_size', type: 'text', def: '(0,0)' },
+        { type: 'rect_offset' },
+        { type: 'vector2_size' },
         { key: 'size_flags_horizontal', type: 'size_flags', def: 'FILL', opts: ['FILL', 'EXPAND', 'EXPAND_FILL', 'SHRINK_BEGIN', 'SHRINK_CENTER', 'SHRINK_END'] },
         { key: 'size_flags_vertical', type: 'size_flags', def: 'FILL', opts: ['FILL', 'EXPAND', 'EXPAND_FILL', 'SHRINK_BEGIN', 'SHRINK_CENTER', 'SHRINK_END'] },
       ]
@@ -124,9 +121,7 @@ export function getPropSections(node: TreeNode): PropertySection[] {
           name: 'Panel Style',
           icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" opacity="0.2"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>',
           fields: [
-            { key: 'bg_color', label: 'background', type: 'color', def: '#252729' },
             { key: 'border_color', label: 'border', type: 'color', def: '#333537' },
-            { key: 'border_radius', type: 'slider', def: '0', min: 0, max: 50 },
             { key: 'padding', type: 'slider', def: '8', min: 0, max: 50 },
             { key: 'clip_contents', type: 'bool', def: 'false' },
           ]
@@ -134,13 +129,6 @@ export function getPropSections(node: TreeNode): PropertySection[] {
       ])
     ],
     'Button': [
-      {
-        name: 'Style',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-        fields: [
-          { type: 'style_tab' }
-        ]
-      },
       {
         name: 'Button Mode',
         icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
@@ -160,18 +148,10 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         }
       ] : [
         {
-          name: 'Button Style',
-          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
+          name: 'Style',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
           fields: [
-            { key: 'bg_color', label: 'background', type: 'color', def: 'rgba(255,255,255,0.1)' },
-            { key: 'hover_bg_color', label: 'hover bg', type: 'color', def: 'rgba(255,255,255,0.2)' },
-            { key: 'active_bg_color', label: 'active bg', type: 'color', def: 'rgba(255,255,255,0.15)' },
-            { key: 'disabled_bg_color', label: 'disabled bg', type: 'color', def: 'rgba(255,255,255,0.05)' },
-            { key: 'border_radius', label: 'border radius', type: 'slider', def: '100', min: 0, max: 100 },
-            { key: 'font_color', label: 'font color', type: 'color', def: '#ffffff' },
-            { key: 'disabled_font_color', label: 'disabled font', type: 'color', def: 'rgba(255,255,255,0.3)' },
-            { key: 'font_size', type: 'slider', def: '14', min: 8, max: 32 },
-            { key: 'font_family', type: 'select', def: 'Montserrat', opts: ['Montserrat', 'JetBrains Mono', 'Rajdhani', 'system-ui'] },
+            { type: 'style_tab' }
           ]
         },
         {
@@ -190,25 +170,13 @@ export function getPropSections(node: TreeNode): PropertySection[] {
             { key: 'toggle_pressed', label: 'initially pressed', type: 'bool', def: 'false' },
             { key: 'toggle_icon', label: 'toggle icon (when pressed)', type: 'icon_picker', def: '' },
             { key: 'icon_animation', label: 'icon animation', type: 'select', def: 'none', opts: ['none', 'fade', 'morph'] },
-            { key: 'animation_duration', label: 'animation duration (ms)', type: 'slider', def: '300', min: 100, max: 1000, step: 50 },
+            { key: 'icon_animation_duration', label: 'icon animation duration (ms)', type: 'slider', def: '300', min: 100, max: 1000, step: 50 },
             { key: 'sync_with_video', label: 'sync with video state', type: 'bool', def: 'false' },
             { key: 'alignment', type: 'select', def: 'CENTER', opts: ['LEFT', 'CENTER', 'RIGHT'] },
             { key: 'gap', type: 'slider', def: '8', min: 0, max: 50 },
-            { key: 'font_weight', type: 'slider', def: '600', min: 100, max: 900, step: 100 },
           ]
         }
       ]),
-    ],
-    'SVGButton': [
-      {
-        name: 'SVGButton',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
-        fields: [
-          { key: 'svg_content', label: 'SVG content', type: 'text', def: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' },
-          { key: 'action', type: 'select', def: 'none', opts: ['none', 'play', 'rewind', 'forward', 'next', 'fullscreen'] },
-          { key: 'disabled', type: 'bool', def: 'false' },
-        ]
-      },
     ],
     'Label': [{
       name: 'Label',
@@ -247,9 +215,6 @@ export function getPropSections(node: TreeNode): PropertySection[] {
         name: 'Button Style',
         icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="8" rx="4"/></svg>',
         fields: [
-          { key: 'bg_color', label: 'background', type: 'color', def: 'rgba(255,255,255,0.1)' },
-          { key: 'hover_bg_color', label: 'hover bg', type: 'color', def: 'rgba(255,255,255,0.18)' },
-          { key: 'border_radius', label: 'border radius', type: 'slider', def: '100', min: 0, max: 100 },
           { key: 'font_color', label: 'font color', type: 'color', def: '#ffffff' },
         ]
       },
