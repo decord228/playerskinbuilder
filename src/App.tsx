@@ -6,6 +6,7 @@ import Outliner from './components/Outliner';
 import FileBrowser from './components/FileBrowser';
 import PropertiesPanel from './components/PropertiesPanel';
 import Viewport from './components/Viewport';
+import SVGAnimator from './components/SVGAnimator';
 import AddNodeDialog from './components/AddNodeDialog';
 import ProjectManager from './components/ProjectManager';
 import GlobalDropZone from './components/GlobalDropZone';
@@ -245,39 +246,45 @@ function App() {
     <div className="app">
       <Header />
       <div className="main" style={!currentProjectId ? { filter: 'blur(8px)', pointerEvents: 'none' } : {}}>
-        {mode === 'edit' && (
+        {mode === 'svg-edit' ? (
+          <SVGAnimator />
+        ) : (
           <>
-            <div className="panel-left">
-              <div className="ph">
-                <div className="ph-top" style={savedPhTopFlex ? { flex: savedPhTopFlex } : {}}>
-                  <div className="tabbar">
-                    <div className="tab active">Scene</div>
-                    <div className="tab-actions">
-                      <button className="ib" title="Add Node" onClick={handleAddNode}>+</button>
+            {mode === 'edit' && (
+              <>
+                <div className="panel-left">
+                  <div className="ph">
+                    <div className="ph-top" style={savedPhTopFlex ? { flex: savedPhTopFlex } : {}}>
+                      <div className="tabbar">
+                        <div className="tab active">Scene</div>
+                        <div className="tab-actions">
+                          <button className="ib" title="Add Node" onClick={handleAddNode}>+</button>
+                        </div>
+                      </div>
+                      <Outliner />
+                    </div>
+                    <div className="ph-resize" id="resizeHorizontal"></div>
+                    <div className="ph-bottom" style={savedPhBottomFlex ? { flex: savedPhBottomFlex } : {}}>
+                      <FileBrowser />
                     </div>
                   </div>
-                  <Outliner />
                 </div>
-                <div className="ph-resize" id="resizeHorizontal"></div>
-                <div className="ph-bottom" style={savedPhBottomFlex ? { flex: savedPhBottomFlex } : {}}>
-                  <FileBrowser />
+
+                <div className="resv" id="resizeLeft"></div>
+              </>
+            )}
+
+            <Viewport />
+
+            {mode === 'edit' && (
+              <>
+                <div className="resv" id="resizeRight"></div>
+
+                <div className="panel-right" style={savedRightPanelWidth ? { width: `${savedRightPanelWidth}px` } : {}}>
+                  <PropertiesPanel />
                 </div>
-              </div>
-            </div>
-
-            <div className="resv" id="resizeLeft"></div>
-          </>
-        )}
-
-        <Viewport />
-
-        {mode === 'edit' && (
-          <>
-            <div className="resv" id="resizeRight"></div>
-
-            <div className="panel-right" style={savedRightPanelWidth ? { width: `${savedRightPanelWidth}px` } : {}}>
-              <PropertiesPanel />
-            </div>
+              </>
+            )}
           </>
         )}
       </div>

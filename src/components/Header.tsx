@@ -49,6 +49,12 @@ export default function Header() {
         >
           Test
         </button>
+        <button
+          className={`tab-btn ${mode === 'svg-edit' ? 'active' : ''}`}
+          onClick={() => setMode('svg-edit')}
+        >
+          SVG Edit
+        </button>
       </div>
       <div className="hright">
         <div className="pbg">

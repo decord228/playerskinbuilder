@@ -76,7 +76,7 @@ export interface PropertySection {
 export interface StoreState {
   tree: TreeNode[];
   selectedNodeId: string | null;
-  mode: 'edit' | 'test';
+  mode: 'edit' | 'test' | 'svg-edit';
   zoom: number;
   pan: { x: number; y: number };
   showContainerOverlays: boolean;
