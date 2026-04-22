@@ -1,31 +1,28 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import useStore from '../store/useStore';
 import './NodeOverlays.css';
 
 export default function NodeOverlays() {
   const tree = useStore(state => state.tree);
   const selectedNodeId = useStore(state => state.selectedNodeId);
+  const selectNode = useStore(state => state.selectNode);
   const zoom = useStore(state => state.zoom);
   const pan = useStore(state => state.pan);
-  const canvasRef = useRef(null);
+  const [overlays, setOverlays] = useState<Array<{
+    id: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    label: string;
+  }>>([]);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-
-    // Set canvas size to match canvas frame (1920x1080)
-    canvas.width = 1920;
-    canvas.height = 1080;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     const viewport = document.getElementById('canvasFrame');
     if (!viewport) return;
 
-    // Draw overlays for all visible nodes
+    const newOverlays: typeof overlays = [];
+
     tree.forEach(node => {
       if (node.visible === false || node.visible === 'false') return;
       if (node.type === 'ColorRect') return;
@@ -43,64 +40,67 @@ export default function NodeOverlays() {
       const w = nodeRect.width / zoom;
       const h = nodeRect.height / zoom;
 
-      const isSelected = node.id === selectedNodeId;
+      if (w < 2 || h < 2) return;
 
-      if (isSelected) {
-        // Draw full border for selected node
-        ctx.strokeStyle = '#4a9eff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, w, h);
-
-        // Draw label
-        ctx.fillStyle = '#4a9eff';
-        ctx.font = '11px Montserrat, sans-serif';
-        const labelText = node.label || node.type;
-        const labelWidth = ctx.measureText(labelText).width + 8;
-        const labelHeight = 18;
-
-        ctx.fillRect(x, y - labelHeight, labelWidth, labelHeight);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(labelText, x + 4, y - 5);
-
-        // Draw resize handles
-        const handleSize = 8;
-        ctx.fillStyle = '#4a9eff';
-
-        // Top-left
-        ctx.fillRect(x - handleSize/2, y - handleSize/2, handleSize, handleSize);
-        // Top-right
-        ctx.fillRect(x + w - handleSize/2, y - handleSize/2, handleSize, handleSize);
-        // Bottom-left
-        ctx.fillRect(x - handleSize/2, y + h - handleSize/2, handleSize, handleSize);
-        // Bottom-right
-        ctx.fillRect(x + w - handleSize/2, y + h - handleSize/2, handleSize, handleSize);
-        // Top-middle
-        ctx.fillRect(x + w/2 - handleSize/2, y - handleSize/2, handleSize, handleSize);
-        // Bottom-middle
-        ctx.fillRect(x + w/2 - handleSize/2, y + h - handleSize/2, handleSize, handleSize);
-        // Middle-left
-        ctx.fillRect(x - handleSize/2, y + h/2 - handleSize/2, handleSize, handleSize);
-        // Middle-right
-        ctx.fillRect(x + w - handleSize/2, y + h/2 - handleSize/2, handleSize, handleSize);
-      }
+      newOverlays.push({
+        id: node.id,
+        x,
+        y,
+        w,
+        h,
+        label: node.label || node.type
+      });
     });
-  }, [tree, selectedNodeId, zoom, pan]);
+
+    setOverlays(newOverlays);
+  }, [tree, zoom, pan]);
+
+  const handleOverlayClick = (e: React.MouseEvent, nodeId: string) => {
+    e.stopPropagation();
+    selectNode(nodeId);
+  };
+
+  const handleBackgroundClick = () => {
+    selectNode(null);
+  };
 
   return (
-    <canvas
-      ref={canvasRef}
-      id="nodeOverlaysCanvas"
+    <div
+      className="node-overlays"
       style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: 1000,
         transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
         transformOrigin: '0 0'
       }}
-    />
+      onClick={handleBackgroundClick}
+    >
+      {overlays.map(overlay => (
+        <div
+          key={overlay.id}
+          className={`nov ${overlay.id === selectedNodeId ? 'sel' : ''}`}
+          data-nid={overlay.id}
+          style={{
+            left: `${overlay.x}px`,
+            top: `${overlay.y}px`,
+            width: `${overlay.w}px`,
+            height: `${overlay.h}px`
+          }}
+          onClick={(e) => handleOverlayClick(e, overlay.id)}
+        >
+          <div className="nlbl">{overlay.label}</div>
+          {overlay.id === selectedNodeId && (
+            <>
+              <div className="rh rh-tl" />
+              <div className="rh rh-tr" />
+              <div className="rh rh-bl" />
+              <div className="rh rh-br" />
+              <div className="rh rh-tm" />
+              <div className="rh rh-bm" />
+              <div className="rh rh-ml" />
+              <div className="rh rh-mr" />
+            </>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }

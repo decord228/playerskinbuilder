@@ -88,9 +88,9 @@ export default function ContainerOverlays() {
           borderColor = 'rgba(156, 163, 175, 0.7)'; // Neutral gray
       }
 
-      // Draw main container border (solid, thicker)
+      // Draw main container border (solid, thinner)
       ctx.strokeStyle = borderColor;
-      ctx.lineWidth = isSelected ? 2 : 1.5;
+      ctx.lineWidth = isSelected ? 1.5 : 1;
       ctx.setLineDash([]);
       ctx.strokeRect(x, y, w, h);
 
@@ -99,17 +99,17 @@ export default function ContainerOverlays() {
       ctx.fillStyle = borderColor;
       const offset = 2;
       // Top-left
-      ctx.fillRect(x - offset, y - offset, markerSize, 1.5);
-      ctx.fillRect(x - offset, y - offset, 1.5, markerSize);
+      ctx.fillRect(x - offset, y - offset, markerSize, 1);
+      ctx.fillRect(x - offset, y - offset, 1, markerSize);
       // Top-right
-      ctx.fillRect(x + w - markerSize + offset, y - offset, markerSize, 1.5);
-      ctx.fillRect(x + w - 1.5 + offset, y - offset, 1.5, markerSize);
+      ctx.fillRect(x + w - markerSize + offset, y - offset, markerSize, 1);
+      ctx.fillRect(x + w - 1 + offset, y - offset, 1, markerSize);
       // Bottom-left
-      ctx.fillRect(x - offset, y + h - 1.5 + offset, markerSize, 1.5);
-      ctx.fillRect(x - offset, y + h - markerSize + offset, 1.5, markerSize);
+      ctx.fillRect(x - offset, y + h - 1 + offset, markerSize, 1);
+      ctx.fillRect(x - offset, y + h - markerSize + offset, 1, markerSize);
       // Bottom-right
-      ctx.fillRect(x + w - markerSize + offset, y + h - 1.5 + offset, markerSize, 1.5);
-      ctx.fillRect(x + w - 1.5 + offset, y + h - markerSize + offset, 1.5, markerSize);
+      ctx.fillRect(x + w - markerSize + offset, y + h - 1 + offset, markerSize, 1);
+      ctx.fillRect(x + w - 1 + offset, y + h - markerSize + offset, 1, markerSize);
 
       // Draw type label
       ctx.fillStyle = borderColor;

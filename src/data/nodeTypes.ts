@@ -6,7 +6,7 @@ export const NODE_HIERARCHY = {
     children: ['Control']
   },
   'Control': {
-    children: ['Container', 'Button', 'Label', 'ColorRect', 'HSlider', 'TextureRect', 'VideoStreamPlayer', 'CanvasLayer']
+    children: ['Container', 'Button', 'Label', 'ColorRect', 'HSlider', 'TextureRect', 'VideoStreamPlayer', 'Separator', 'CanvasLayer']
   },
   'Container': {
     children: ['HBoxContainer', 'VBoxContainer', 'PanelContainer', 'MarginContainer', 'AutoHideContainer']
@@ -31,6 +31,7 @@ export const NODE_INHERITANCE: Record<NodeType, string> = {
   'VolumeButton': 'Button',
   'TextureRect': 'Control',
   'VideoStreamPlayer': 'Control',
+  'Separator': 'Control',
   'Control': 'Node',
 };
 
@@ -48,6 +49,7 @@ export const NODE_TYPES: NodeTypeDefinition[] = [
   { type: 'VolumeButton', icon: 'ic-volume', isC: false, desc: 'Button with expandable volume slider' },
   { type: 'TextureRect', icon: 'ic-sprite', isC: false, desc: 'Image/texture' },
   { type: 'VideoStreamPlayer', icon: 'ic-video', isC: false, desc: 'Video stream' },
+  { type: 'Separator', icon: 'ic-margin', isC: false, desc: 'Visual separator line' },
   { type: 'Control', icon: 'ic-ctrl', isC: false, desc: 'Base control' },
 ];
 

@@ -2,6 +2,25 @@ import { applyNodeStyles } from './nodeRenderer';
 import { getUIIcon } from '../data/icons';
 import type { TreeNode } from '../types';
 
+function applyAlphaToColor(color: string, alpha: number): string {
+  // Parse hex color
+  if (color.startsWith('#')) {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  // Parse rgba/rgb color
+  const rgbaMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
+  if (rgbaMatch) {
+    return `rgba(${rgbaMatch[1]}, ${rgbaMatch[2]}, ${rgbaMatch[3]}, ${alpha})`;
+  }
+
+  return color;
+}
+
 export function applyPropertyChange(nodeId: string, key: string, value: string, tree: TreeNode[]): void {
   const element = document.getElementById(`node_${nodeId}`);
   const node = tree.find(n => n.id === nodeId);
@@ -14,8 +33,20 @@ export function applyPropertyChange(nodeId: string, key: string, value: string, 
   switch (key) {
     // Text properties
     case 'text':
+    case 'display_mode':
       if (node.type === 'Label') {
-        element.textContent = value;
+        // Handle display mode
+        if (props.display_mode === 'time_remaining') {
+          // Calculate time remaining (placeholder logic)
+          const totalSeconds = 3838; // From timeline max_value
+          const currentSeconds = 677; // From timeline value
+          const remainingSeconds = totalSeconds - currentSeconds;
+          const minutes = Math.floor(remainingSeconds / 60);
+          const seconds = remainingSeconds % 60;
+          element.textContent = `-${minutes}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+          element.textContent = props.text || 'Label';
+        }
       } else if (node.type === 'Button') {
         // Rebuild button content
         element.innerHTML = '';
@@ -98,16 +129,28 @@ export function applyPropertyChange(nodeId: string, key: string, value: string, 
       break;
 
     case 'color':
+    case 'color_alpha':
       if (node.type === 'ColorRect') {
         if (props.gradient_enabled === 'true') {
           const angle = props.gradient_angle || '180';
-          const start = props.gradient_start || 'rgba(0,0,0,0.8)';
-          const end = props.gradient_end || 'rgba(0,0,0,0)';
+
+          // Parse start color and apply alpha
+          let startColor = props.gradient_start || '#000000';
+          const startAlpha = props.gradient_start_alpha || '0.9';
+          startColor = applyAlphaToColor(startColor, parseFloat(startAlpha));
+
+          // Parse end color and apply alpha
+          let endColor = props.gradient_end || '#000000';
+          const endAlpha = props.gradient_end_alpha || '0';
+          endColor = applyAlphaToColor(endColor, parseFloat(endAlpha));
+
           const startPos = props.gradient_start_pos || '0';
-          const endPos = props.gradient_end_pos || '100';
-          element.style.background = `linear-gradient(${angle}deg, ${start} ${startPos}%, ${end} ${endPos}%)`;
+          const endPos = props.gradient_end_pos || '50';
+          element.style.background = `linear-gradient(${angle}deg, ${startColor} ${startPos}%, ${endColor} ${endPos}%)`;
         } else {
-          element.style.background = value;
+          const color = props.color || '#000000';
+          const alpha = props.color_alpha || '0.5';
+          element.style.background = applyAlphaToColor(color, parseFloat(alpha));
         }
       }
       break;
@@ -226,16 +269,29 @@ export function applyPropertyChange(nodeId: string, key: string, value: string, 
     case 'gradient_end':
     case 'gradient_start_pos':
     case 'gradient_end_pos':
+    case 'gradient_start_alpha':
+    case 'gradient_end_alpha':
       if (node.type === 'ColorRect') {
         if (props.gradient_enabled === 'true') {
           const angle = props.gradient_angle || '180';
-          const start = props.gradient_start || 'rgba(0,0,0,0.8)';
-          const end = props.gradient_end || 'rgba(0,0,0,0)';
+
+          // Parse start color and apply alpha
+          let startColor = props.gradient_start || '#000000';
+          const startAlpha = props.gradient_start_alpha || '0.9';
+          startColor = applyAlphaToColor(startColor, parseFloat(startAlpha));
+
+          // Parse end color and apply alpha
+          let endColor = props.gradient_end || '#000000';
+          const endAlpha = props.gradient_end_alpha || '0';
+          endColor = applyAlphaToColor(endColor, parseFloat(endAlpha));
+
           const startPos = props.gradient_start_pos || '0';
-          const endPos = props.gradient_end_pos || '100';
-          element.style.background = `linear-gradient(${angle}deg, ${start} ${startPos}%, ${end} ${endPos}%)`;
+          const endPos = props.gradient_end_pos || '50';
+          element.style.background = `linear-gradient(${angle}deg, ${startColor} ${startPos}%, ${endColor} ${endPos}%)`;
         } else {
-          element.style.background = props.color || 'rgba(0,0,0,0.5)';
+          const color = props.color || '#000000';
+          const alpha = props.color_alpha || '0.5';
+          element.style.background = applyAlphaToColor(color, parseFloat(alpha));
         }
       }
       break;
@@ -297,6 +353,50 @@ export function applyPropertyChange(nodeId: string, key: string, value: string, 
     case 'transition_duration':
       if (node.type === 'AutoHideContainer') {
         element.style.transition = `opacity ${value}ms ease`;
+      }
+      break;
+
+    // Icon change
+    case 'icon':
+    case 'icon_position':
+      if (node.type === 'Button') {
+        element.innerHTML = '';
+        const iconSvg = getUIIcon(props.icon);
+        const iconPosition = props.icon_position || 'row';
+
+        if (iconSvg) {
+          if (iconPosition === 'column' || props.icon_label) {
+            element.style.flexDirection = 'column';
+            element.style.gap = (props.icon_label_gap || '4') + 'px';
+
+            const iconWrapper = document.createElement('div');
+            iconWrapper.innerHTML = iconSvg;
+            iconWrapper.style.display = 'flex';
+            element.appendChild(iconWrapper);
+
+            const label = document.createElement('span');
+            label.textContent = props.icon_label || props.text || '';
+            label.style.fontSize = (props.icon_label_size || '10') + 'px';
+            label.style.fontWeight = '500';
+            element.appendChild(label);
+          } else {
+            element.style.flexDirection = 'row';
+            element.style.gap = (props.gap || '8') + 'px';
+
+            const iconWrapper = document.createElement('div');
+            iconWrapper.innerHTML = iconSvg;
+            iconWrapper.style.display = 'flex';
+            element.appendChild(iconWrapper);
+
+            if (props.text) {
+              const textSpan = document.createElement('span');
+              textSpan.textContent = props.text;
+              element.appendChild(textSpan);
+            }
+          }
+        } else {
+          element.textContent = props.text || 'Button';
+        }
       }
       break;
 

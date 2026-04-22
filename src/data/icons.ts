@@ -1,17 +1,18 @@
 export const TYPE_ICONS = {
-  'CanvasLayer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M2 8h20M8 2v20"/></svg>',
-  'MarginContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="1" stroke-dasharray="2 2" opacity="0.6"/><path d="M7 5v2M17 5v2M7 17v2M17 17v2M5 7h2M5 17h2M17 7h2M17 17h2"/></svg>',
-  'HBoxContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="5" height="12" rx="1"/><rect x="10" y="6" width="4" height="12" rx="1"/><rect x="16" y="6" width="5" height="12" rx="1"/></svg>',
-  'VBoxContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="5" rx="1"/><rect x="6" y="10" width="12" height="4" rx="1"/><rect x="6" y="16" width="12" height="5" rx="1"/></svg>',
-  'PanelContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><circle cx="6" cy="6" r="0.5" fill="currentColor"/><circle cx="8.5" cy="6" r="0.5" fill="currentColor"/><circle cx="11" cy="6" r="0.5" fill="currentColor"/></svg>',
-  'Button': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 12h10" opacity="0.6"/></svg>',
-  'Label': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h13M4 17h10"/></svg>',
-  'HSlider': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="3" fill="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/></svg>',
-  'VolumeButton': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="6" height="8" rx="1"/><path d="M8 10l3-2v8l-3-2"/><line x1="14" y1="12" x2="22" y2="12" opacity="0.6"/><circle cx="19" cy="12" r="2" fill="none" opacity="0.6"/><circle cx="19" cy="12" r="1" fill="currentColor" opacity="0.6"/></svg>',
-  'TextureRect': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="2"/><path d="M21 15l-5-5-6 6-3-3-4 4"/></svg>',
-  'VideoStreamPlayer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M10 9l6 3.5-6 3.5z" fill="currentColor" stroke="none"/></svg>',
-  'Control': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><circle cx="12" cy="12" r="2" opacity="0.4"/></svg>',
-  'AutoHideContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="1" stroke-dasharray="2 2" opacity="0.6"/><path d="M7 5v2M17 5v2M7 17v2M17 17v2M5 7h2M5 17h2M17 7h2M17 17h2"/></svg>',
+  'CanvasLayer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M2 8h20M8 2v20"/></svg>',
+  'MarginContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="1" stroke-dasharray="2 2" opacity="0.6"/><path d="M7 5v2M17 5v2M7 17v2M17 17v2M5 7h2M5 17h2M17 7h2M17 17h2"/></svg>',
+  'HBoxContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="5" height="12" rx="1"/><rect x="10" y="6" width="4" height="12" rx="1"/><rect x="16" y="6" width="5" height="12" rx="1"/></svg>',
+  'VBoxContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="5" rx="1"/><rect x="6" y="10" width="12" height="4" rx="1"/><rect x="6" y="16" width="12" height="5" rx="1"/></svg>',
+  'PanelContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><circle cx="6" cy="6" r="0.8" fill="currentColor"/><circle cx="9" cy="6" r="0.8" fill="currentColor"/><circle cx="12" cy="6" r="0.8" fill="currentColor"/></svg>',
+  'Button': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 12h10" opacity="0.6"/></svg>',
+  'Label': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h13M4 17h10"/></svg>',
+  'HSlider': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="3" fill="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/></svg>',
+  'VolumeButton': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="6" height="8" rx="1"/><path d="M8 10l3-2v8l-3-2"/><line x1="14" y1="12" x2="22" y2="12" opacity="0.6"/><circle cx="19" cy="12" r="2" fill="none" opacity="0.6"/><circle cx="19" cy="12" r="1" fill="currentColor" opacity="0.6"/></svg>',
+  'ColorRect': '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m4 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M5.5 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/><path d="M16 8c0 3.15-1.866 2.585-3.567 2.07C11.42 9.763 10.465 9.473 10 10c-.603.683-.475 1.819-.351 2.92C9.826 14.495 9.996 16 8 16a8 8 0 1 1 8-8m-8 7c.611 0 .654-.171.655-.176.078-.146.124-.464.07-1.119-.014-.168-.037-.37-.061-.591-.052-.464-.112-1.005-.118-1.462-.01-.707.083-1.61.704-2.314.369-.417.845-.578 1.272-.618.404-.038.812.026 1.16.104.343.077.702.186 1.025.284l.028.008c.346.105.658.199.953.266.653.148.904.083.991.024C14.717 9.38 15 9.161 15 8a7 7 0 1 0-7 7"/></svg>',
+  'TextureRect': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="2"/><path d="M21 15l-5-5-6 6-3-3-4 4"/></svg>',
+  'VideoStreamPlayer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M10 9l6 3.5-6 3.5z" fill="currentColor" stroke="none"/></svg>',
+  'Control': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><circle cx="12" cy="12" r="2" opacity="0.4"/></svg>',
+  'AutoHideContainer': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><rect x="3" y="3" width="18" height="18" rx="1" opacity="0.3" stroke-dasharray="3 2"/></svg>',
 };
 
 export const UI_ICONS = {
@@ -25,16 +26,52 @@ export const UI_ICONS = {
   'copy': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
   'edit': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
   'play': '<svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.1584 8.45605C20.7146 8.74977 21.1798 9.18823 21.5042 9.72445C21.8286 10.2607 22 10.8744 22 11.5C22 12.1256 21.8286 12.7394 21.5042 13.2756C21.1798 13.8118 20.7146 14.2503 20.1584 14.544L5.32302 22.5558C2.9342 23.8472 0 22.1682 0 19.513V3.4882C0 0.831779 2.9342 -0.846021 5.32302 0.44309L20.1584 8.45605Z" fill="white"/></svg>',
+  'pause': '<svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 2C0 0.895431 0.895431 0 2 0H7C8.10457 0 9 0.895431 9 2V21C9 22.1046 8.10457 23 7 23H2C0.895431 23 0 22.1046 0 21V2ZM13 2C13 0.895431 13.8954 0 15 0H20C21.1046 0 22 0.895431 22 2V21C22 22.1046 21.1046 23 20 23H15C13.8954 23 13 22.1046 13 21V2Z" fill="white"/></svg>',
   'volume': '<svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M24.2029 5.21468C24.395 5.02522 24.6554 4.9188 24.9268 4.9188C25.1983 4.9188 25.4587 5.02522 25.6507 5.21468L25.6535 5.21738L25.6576 5.22008L25.6671 5.22952L25.6944 5.2565L25.7791 5.34958C25.8474 5.42647 25.943 5.53573 26.0537 5.67467C27.3157 7.29472 28 9.28139 28 11.3254C28 13.3695 27.3157 15.3561 26.0537 16.9762C25.9393 17.1203 25.819 17.2598 25.6931 17.3943L25.6658 17.4213L25.6576 17.4308L25.6535 17.4335L25.6521 17.4348L24.9555 16.7495L25.6521 17.4375C25.4599 17.6273 25.1993 17.7339 24.9275 17.7339C24.6557 17.7339 24.3951 17.6273 24.2029 17.4375C24.0108 17.2477 23.9028 16.9903 23.9028 16.7219C23.9028 16.4535 24.0108 16.1961 24.2029 16.0063L24.2016 16.0076L24.1988 16.009L24.2057 16.0022L24.2507 15.9537C24.2944 15.9069 24.3577 15.8318 24.4406 15.7284C25.3047 14.6143 25.8225 13.2764 25.9311 11.8771C26.0397 10.4779 25.7345 9.07762 25.0525 7.84648C24.8744 7.52247 24.6698 7.21343 24.4406 6.92245C24.3664 6.82779 24.288 6.73642 24.2057 6.64862L24.1988 6.64187C24.0084 6.45175 23.9019 6.19489 23.9027 5.92744C23.9034 5.66 24.0114 5.40373 24.2029 5.21468ZM16.0993 0.393536C17.6878 -0.641108 19.8049 0.485265 19.8049 2.36435V21.6354C19.8049 23.5159 17.6878 24.6409 16.0993 23.6063L7.9042 18.2712C7.84876 18.2347 7.78371 18.215 7.71707 18.2145H3.7561C2.75992 18.2145 1.80454 17.8237 1.10014 17.128C0.395731 16.4323 0 15.4887 0 14.5049V9.4949C0 8.51105 0.395731 7.5675 1.10014 6.87181C1.80454 6.17612 2.75992 5.78529 3.7561 5.78529H7.71707C7.78403 5.7855 7.84958 5.76627 7.90556 5.72998L16.0993 0.393536Z" fill="white"/></svg>',
   'volume-2': '<svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M24.2029 5.21468C24.395 5.02522 24.6554 4.9188 24.9268 4.9188C25.1983 4.9188 25.4587 5.02522 25.6507 5.21468L25.6535 5.21738L25.6576 5.22008L25.6671 5.22952L25.6944 5.2565L25.7791 5.34958C25.8474 5.42647 25.943 5.53573 26.0537 5.67467C27.3157 7.29472 28 9.28139 28 11.3254C28 13.3695 27.3157 15.3561 26.0537 16.9762C25.9393 17.1203 25.819 17.2598 25.6931 17.3943L25.6658 17.4213L25.6576 17.4308L25.6535 17.4335L25.6521 17.4348L24.9555 16.7495L25.6521 17.4375C25.4599 17.6273 25.1993 17.7339 24.9275 17.7339C24.6557 17.7339 24.3951 17.6273 24.2029 17.4375C24.0108 17.2477 23.9028 16.9903 23.9028 16.7219C23.9028 16.4535 24.0108 16.1961 24.2029 16.0063L24.2016 16.0076L24.1988 16.009L24.2057 16.0022L24.2507 15.9537C24.2944 15.9069 24.3577 15.8318 24.4406 15.7284C25.3047 14.6143 25.8225 13.2764 25.9311 11.8771C26.0397 10.4779 25.7345 9.07762 25.0525 7.84648C24.8744 7.52247 24.6698 7.21343 24.4406 6.92245C24.3664 6.82779 24.288 6.73642 24.2057 6.64862L24.1988 6.64187C24.0084 6.45175 23.9019 6.19489 23.9027 5.92744C23.9034 5.66 24.0114 5.40373 24.2029 5.21468ZM16.0993 0.393536C17.6878 -0.641108 19.8049 0.485265 19.8049 2.36435V21.6354C19.8049 23.5159 17.6878 24.6409 16.0993 23.6063L7.9042 18.2712C7.84876 18.2347 7.78371 18.215 7.71707 18.2145H3.7561C2.75992 18.2145 1.80454 17.8237 1.10014 17.128C0.395731 16.4323 0 15.4887 0 14.5049V9.4949C0 8.51105 0.395731 7.5675 1.10014 6.87181C1.80454 6.17612 2.75992 5.78529 3.7561 5.78529H7.71707C7.78403 5.7855 7.84958 5.76627 7.90556 5.72998L16.0993 0.393536Z" fill="white"/></svg>',
 };
 
 import type { NodeType } from '../types';
+import { assetManager } from '../store/assetStore';
 
 export function getTypeIcon(type: NodeType): string {
   return TYPE_ICONS[type] || TYPE_ICONS['Control'];
 }
 
 export function getUIIcon(name: string): string {
+  // Check if it's a file path (e.g., "default-icons/play.svg")
+  if (name.includes('/') || name.endsWith('.svg')) {
+    const asset = assetManager.getAsset(name);
+    if (asset && asset.type === 'svg') {
+      // Decode base64 SVG to string
+      const base64 = asset.data.split(',')[1];
+      if (base64) {
+        try {
+          return atob(base64);
+        } catch (e) {
+          console.error('Failed to decode SVG asset:', e);
+        }
+      }
+    }
+    return '';
+  }
+
+  // Check if it's an asset reference
+  if (name.startsWith('asset:')) {
+    const assetId = name.replace('asset:', '');
+    const asset = assetManager.getAsset(assetId);
+    if (asset && asset.type === 'svg') {
+      // Decode base64 SVG to string
+      const base64 = asset.data.split(',')[1];
+      if (base64) {
+        try {
+          return atob(base64);
+        } catch (e) {
+          console.error('Failed to decode SVG asset:', e);
+        }
+      }
+    }
+  }
+
   return UI_ICONS[name] || '';
 }

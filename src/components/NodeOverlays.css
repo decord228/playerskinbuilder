@@ -1,3 +1,108 @@
-#nodeOverlaysCanvas {
-  image-rendering: crisp-edges;
+.node-overlays {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.nov {
+  position: absolute;
+  border: 1.5px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.1s;
+  pointer-events: auto;
+}
+
+.nov:hover {
+  border-color: rgba(74, 158, 255, 0.45);
+  background: rgba(74, 158, 255, 0.05);
+}
+
+.nov.sel {
+  border-color: var(--accent);
+  background: rgba(74, 158, 255, 0.07);
+}
+
+.nlbl {
+  position: absolute;
+  top: -17px;
+  left: -1px;
+  background: var(--accent);
+  color: #000;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  white-space: nowrap;
+  display: none;
+  font-family: var(--font-ui);
+  font-weight: 600;
+}
+
+.nov.sel .nlbl,
+.nov:hover .nlbl {
+  display: block;
+}
+
+.rh {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border: 1.5px solid var(--accent);
+  border-radius: 1px;
+  z-index: 21;
+}
+
+.rh-tl {
+  top: -4px;
+  left: -4px;
+  cursor: nw-resize;
+}
+
+.rh-tr {
+  top: -4px;
+  right: -4px;
+  cursor: ne-resize;
+}
+
+.rh-bl {
+  bottom: -4px;
+  left: -4px;
+  cursor: sw-resize;
+}
+
+.rh-br {
+  bottom: -4px;
+  right: -4px;
+  cursor: se-resize;
+}
+
+.rh-tm {
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: n-resize;
+}
+
+.rh-bm {
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: s-resize;
+}
+
+.rh-ml {
+  top: 50%;
+  left: -4px;
+  transform: translateY(-50%);
+  cursor: w-resize;
+}
+
+.rh-mr {
+  top: 50%;
+  right: -4px;
+  transform: translateY(-50%);
+  cursor: e-resize;
 }

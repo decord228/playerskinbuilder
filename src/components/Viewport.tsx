@@ -3,11 +3,12 @@ import useStore from '../store/useStore';
 import { renderNodeTree } from '../utils/nodeRenderer';
 import NodeOverlays from './NodeOverlays';
 import ContainerOverlays from './ContainerOverlays';
+import TestMode from './TestMode';
 import './Viewport.css';
 import './NodeStyles.css';
 
 export default function Viewport() {
-  const { tree, mode, zoom, pan, setZoom, setPan, showContainerOverlays, toggleContainerOverlays } = useStore();
+  const { tree, mode, zoom, pan, setZoom, setPan, showContainerOverlays, toggleContainerOverlays, selectNode } = useStore();
   const canvasRef = useRef(null);
   const wrapperRef = useRef(null);
   const [isPanning, setIsPanning] = useState(false);
@@ -121,9 +122,9 @@ export default function Viewport() {
     };
   }, [isPanning]);
 
-  // Render nodes when tree changes
+  // Render nodes when tree changes or mode changes
   useEffect(() => {
-    if (canvasRef.current && tree.length > 0) {
+    if (canvasRef.current && tree.length > 0 && mode === 'edit') {
       console.log('Rendering tree:', tree.length, 'nodes');
       try {
         renderNodeTree(tree, canvasRef.current);
@@ -132,7 +133,12 @@ export default function Viewport() {
         console.error('Render error:', error);
       }
     }
-  }, [tree]);
+  }, [tree, mode]);
+
+  // Show TestMode when in test mode
+  if (mode === 'test') {
+    return <TestMode />;
+  }
 
   return (
     <div className="viewport-container">
@@ -150,14 +156,17 @@ export default function Viewport() {
             onClick={toggleContainerOverlays}
             title="Show container overlays"
           >
-            📦
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M9 3v18M15 3v18M3 9h18M3 15h18" opacity="0.5"/>
+            </svg>
           </button>
         </div>
         <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginLeft: 'auto' }}>
           1920 × 1080 | Pan: {Math.round(pan.x)}, {Math.round(pan.y)}
         </div>
       </div>
-      <div className="varea" ref={wrapperRef}>
+      <div className="varea" ref={wrapperRef} onClick={() => selectNode(null)}>
         <div className="cwrap">
           <div
             className="cframe"
